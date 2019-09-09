@@ -1,16 +1,22 @@
 const BTRUST = artifacts.require('BTRUST');
+const config = require('../btrust-config');
 
-const foundationInitialAddress = '0xa83adc3B94802a9132101c7Bd8ac3A93604e2fA8'
+const BN = web3.utils.BN;
+const decimalsBN = new BN(config.decimals);
+const divisor = new BN(10).pow(decimalsBN)
 
-contract('BTRUST', accounts => {
-  it('should put 10000 BTRUST in the initial foundation account', () =>
+contract('BTRUST', _ => {
+  it(`should put ${config.initialSupplyBTRUST} BTRUST in the initial foundation account`, () =>
   BTRUST.deployed()
-      .then(instance => instance.balanceOf.call(foundationInitialAddress))
+      .then(instance => instance.balanceOf.call(config.networks.development.foundationInitialAddress))
       .then(balance => {
+        balanceBN = balance.valueOf();
+        const balanceBTRUST = balanceBN.div(divisor)
+        BTRUSTTokens = web3.utils.fromWei(balanceBN)
         assert.equal(
-          balance.valueOf().toString(),
-          '10000',
-          '10000 was not in the first account'
+          balanceBTRUST,
+          config.initialSupplyBTRUST,
+          `${config.initialSupplyBTRUST} was not in the foundation account`
         );
       }));
 });
