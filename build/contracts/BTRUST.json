@@ -976,6 +976,59 @@
     "version": "0.5.8+commit.23d335f2.Emscripten.clang"
   },
   "networks": {
+    "3": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event",
+          "signature": "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event",
+          "signature": "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925"
+        }
+      },
+      "links": {},
+      "address": "0x34C7D0A921F679138Be68DD3e3E51F9daB2fdADd",
+      "transactionHash": "0x7cfb93b5fc1f95fd58aef31cf7e7239624947b0df14eb4f392858308d3366163"
+    },
     "5777": {
       "events": {
         "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
@@ -1026,12 +1079,12 @@
         }
       },
       "links": {},
-      "address": "0xa47630D6d0951802920A8c26c0E942a4c056f4c3",
-      "transactionHash": "0x748128625cfa0959c0deb93c28f44136d03787128cfcb7a998453b5b59dc7118"
+      "address": "0x175962ED758993f98c26C56cc4668989E049B9D1",
+      "transactionHash": "0xdeb8d646f1e3a3261533c8b117dfd2b5e51891a72aea5223db1529eb3bcf2b79"
     }
   },
   "schemaVersion": "3.0.15",
-  "updatedAt": "2019-09-09T18:43:07.607Z",
+  "updatedAt": "2019-09-09T19:21:11.789Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
