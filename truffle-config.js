@@ -46,9 +46,9 @@ module.exports = {
     // options below to some value.
     //
     development: {
-     host: "127.0.0.1",     // Localhost (default: none)
-     port: 9545,            // Standard Ethereum port (default: none)
-     network_id: "*",       // Any network (default: none)
+      host: "127.0.0.1",     // Localhost (default: none)
+      port: process.env.PORT || 9545,            // Standard Ethereum port (default: none)
+      network_id: "*",       // Any network (default: none)
     },
     ropsten: {
       provider: () => new HDWalletProvider(secrets.deployerMnemonicRopsten, `https://ropsten.infura.io/v3/${secrets.infuraProjectID}`),
@@ -61,9 +61,9 @@ module.exports = {
 
     // Useful for private networks
     // private: {
-      // provider: () => new HDWalletProvider(mnemonic, `https://network.io`),
-      // network_id: 2111,   // This network is yours, in the cloud.
-      // production: true    // Treats this network as if it was a public net. (default: false)
+    // provider: () => new HDWalletProvider(mnemonic, `https://network.io`),
+    // network_id: 2111,   // This network is yours, in the cloud.
+    // production: true    // Treats this network as if it was a public net. (default: false)
     // }
   },
 
