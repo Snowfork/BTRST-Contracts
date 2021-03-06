@@ -1,4 +1,9 @@
 module.exports = {
-  infuraProjectID: '1234...',
-  deployerMnemonicRopsten: 'a b c d...',
+  infuraProjectIDRopstein: '1234...',
+  infuraProjectIDMainnet: '',
+  deployerMnemonicRopsten: 'a b c',
+  deployerMnemonicMainnet: '',
+  deployerMnemonicBSC: '',
+  deployerMnemonicBSCTestnet: '',
+  deployeerMnemonicMatic: ''
 }

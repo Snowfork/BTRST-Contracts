@@ -1,2 +1,9 @@
+.env
+.env.local
 node_modules
-secrets.js
+.secrets.js
+secret.js
+
+#Hardhat files
+cache
+artifacts

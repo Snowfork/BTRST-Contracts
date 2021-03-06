@@ -26,13 +26,47 @@ Clone the repo, then:
 npm install
 ```
 
-### Running Tests
+Can use truffle or hardhat, hardhat is recommended
+
+### Start a Local Instance 
+
+#### Ganache option
+```bash
+ganache-cli
+```
+
+#### hardhat option
+```bash
+npx hardhat node
+```
+
+### Running Tests with hardhat option
+
+```bash
+npx hardhat test
+```
+
+### Running Tests with truffle option
 
 ```bash
 truffle test
 ```
 
-### Deployment
+### Deployment with hardhat option
+
+#### Local
+
+```bash
+npx hardhat run --network localhost scripts/deploy.js
+```
+
+#### Other network
+
+```bash
+npx hardhat run --network <your-network> scripts/deploy.js
+```
+
+### Deployment with truffle option
 
 #### Local
 
@@ -40,10 +74,17 @@ truffle test
 truffle migrate --network development
 ```
 
+#### Other network
+
+```bash
+truffle migrate --network <network>
+```
+
 #### Ropsten
 
 The project deploys to Ropsten via Infura. A secrets-example.js file is included. Copy this file into secrets.js, replacing the infuraProjectID with your Infura project ID and the deployerMnemonicRopsten with the private mnemonic that the Ropsten deployer account comes from. Make sure this account has enough test Ethereum to deploy, then:
 
+#### hardhat 
 ```bash
-truffle migrate --network ropsten
+npx hardhat run --network ropstein scripts/deploy.js
 ```

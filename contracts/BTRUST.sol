@@ -1,11 +1,12 @@
-pragma solidity >=0.5.8 <0.6.0;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.7.3;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20Detailed.sol";
 
-contract BTRUST is ERC20, ERC20Detailed {
+contract BTRUST is ERC20 {
 
-    constructor(address foundationInitialAddress, uint256 initialSupply) ERC20Detailed("BTRUST", "BTRUST", 18) public {
+    constructor(address foundationInitialAddress, uint256 initialSupply) ERC20("BTRUST", "BTRUST") {
         _mint(foundationInitialAddress, initialSupply);
     }
 }
+
