@@ -1,2 +1,4 @@
 node_modules
 secrets.js
+artifacts
+cache

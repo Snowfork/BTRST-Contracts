@@ -1,5 +1,7 @@
 module.exports = {
   initialSupplyBTRUST: 1000000,
+  name : 'BTRUST',
+  symbol: 'BTRUST',
   decimals: 18,
   networks: {
     development: {
