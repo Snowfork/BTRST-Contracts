@@ -22,7 +22,7 @@ describe('BTRUST', () => {
 
     beforeEach(async () => {
         [owner, a1, a2, ...accounts] = await web3.eth.getAccounts();
-        chainId = 1; // await web3.eth.net.getId(); See: https://github.com/trufflesuite/ganache-core/issues/515
+        chainId = await web3.eth.net.getId();// See: https://github.com/trufflesuite/ganache-core/issues/515
 
         btrust = await BTRUST.new(owner);
     });
@@ -45,7 +45,7 @@ describe('BTRUST', () => {
     });
 
     describe('delegateBySig', () => {
-        const Domain = (btrust) => ({ name, chainId, verifyingContract: btrust._address });
+        const Domain = (token) => ({ name, chainId, verifyingContract: token.address });
         const Types = {
             Delegation: [
                 { name: 'delegatee', type: 'address' },
@@ -56,28 +56,31 @@ describe('BTRUST', () => {
 
         it('reverts if the signatory is invalid', async () => {
             const delegatee = owner, nonce = 0, expiry = 0;
-            await expect(btrust.delegateBySig(delegatee, nonce, expiry, 0, '0x0', '0xbad')).to.eventually.be.rejectedWith("Comp::delegateBySig: invalid signature")
+            expect(btrust.delegateBySig(delegatee, nonce, expiry, 0, '0x0', '0xbad')).to.eventually.be.rejectedWith("Comp::delegateBySig: invalid signature")
         });
 
         it('reverts if the nonce is bad ', async () => {
             const delegatee = owner, nonce = 1, expiry = 0;
-            const { v, r, s } = EIP712.sign(Domain(btrust), 'Delegation', { delegatee, nonce, expiry }, Types, unlockedAccount(a1).secretKey);
-            await expect(btrust.delegateBySig(delegatee, nonce, expiry, v, r, s)).to.eventually.be.rejectedWith("revert Comp::delegateBySig: invalid nonce");
+            const signatory = web3.eth.accounts.create();
+            const { v, r, s } = EIP712.sign(Domain(btrust), 'Delegation', { delegatee, nonce, expiry }, Types, signatory.privateKey);
+            expect(btrust.delegateBySig(delegatee, nonce, expiry, v, r, s)).to.eventually.be.rejectedWith("revert Comp::delegateBySig: invalid nonce");
         });
 
         it('reverts if the signature has expired', async () => {
             const delegatee = owner, nonce = 0, expiry = 0;
-            const { v, r, s } = EIP712.sign(Domain(btrust), 'Delegation', { delegatee, nonce, expiry }, Types, unlockedAccount(a1).secretKey);
-            await expect(send(btrust, 'delegateBySig', [delegatee, nonce, expiry, v, r, s])).rejects.toRevert("revert Comp::delegateBySig: signature expired");
+            const signatory = web3.eth.accounts.create();
+            const { v, r, s } = EIP712.sign(Domain(btrust), 'Delegation', { delegatee, nonce, expiry }, Types, signatory.privateKey);
+            expect(btrust.delegateBySig(delegatee, nonce, expiry, v, r, s)).to.eventually.be.rejectedWith("revert Comp::delegateBySig: signature expired");
         });
 
         it('delegates on behalf of the signatory', async () => {
             const delegatee = owner, nonce = 0, expiry = 10e9;
-            const { v, r, s } = EIP712.sign(Domain(btrust), 'Delegation', { delegatee, nonce, expiry }, Types, unlockedAccount(a1).secretKey);
-            expect(await call(btrust, 'delegates', [a1])).to.equal(address(0));
-            const tx = await send(btrust, 'delegateBySig', [delegatee, nonce, expiry, v, r, s]);
+            const signatory = web3.eth.accounts.create();
+            const { v, r, s } = EIP712.sign(Domain(btrust), 'Delegation', { delegatee, nonce, expiry }, Types, signatory.privateKey);
+            const tx = await btrust.delegateBySig(delegatee, nonce, expiry, v, r, s);
             expect(tx.gasUsed < 80000);
-            expect(await call(btrust, 'delegates', [a1])).to.equal(owner);
+            result = await btrust.delegates(signatory.address)
+            expect(result).to.equal(owner);
         });
     });
 
@@ -128,36 +131,40 @@ describe('BTRUST', () => {
             await btrust.transfer(guy, '100'); //give an account a few tokens for readability
             result = await btrust.numCheckpoints(a1);
             await expect(result.toString()).to.equal('0');
-            console.log(1);
-          // result = await minerStop();
-            await network.provider.send("evm_setAutomine", [false])
-
-            console.log(result)
+        
+            await network.provider.send("evm_setAutomine", [false])  // result = await minerStop();
 
             let t1 = btrust.delegate(a1, { from: guy });
             let t2 = btrust.transfer(a2, 10, { from: guy });
-            let t3 = btrust.transfer(a2, 10, { from: guy });
+            let t3 = btrust.transfer(a2, 10, { from: guy });    
 
-         //   await network.provider.send("evm_setAutomine", [true])
-
-          // await minerStart();
-            await network.provider.send("evm_mine")
-
-            t1 = await t1;
-            t2 = await t2;
-            t3 = await t3;
+            await network.provider.send("evm_setAutomine", [true]) // await minerStart();
 
             result = await btrust.numCheckpoints(a1);
-            console.log(result.toString())
-            expect(result.toString()).to.equal('1');
+            console.log("t0 " + result.toString())
+
+            t1 = await t1;
+            result = await btrust.numCheckpoints(a1);
+            console.log("t1 " + result.toString())
+
+            t2 = await t2;
+            result = await btrust.numCheckpoints(a1);
+            console.log("t2 " + result.toString())
+
+            t3 = await t3;
+            result = await btrust.numCheckpoints(a1);
+            console.log("t3 " + result.toString())
+
+            // result = await btrust.numCheckpoints(a1);
+            // expect(result.toString()).to.equal('1');
 
             result = await btrust.checkpoints(a1, 0);
             expect(result.fromBlock.toString()).to.equal(t1.receipt.blockNumber.toString());
             expect(result.votes.toString()).to.equal('80');
 
-            result = await btrust.checkpoints(a1, 1);
-            expect(result.fromBlock.toString()).to.equal('0');
-            expect(result.votes.toString()).to.equal('0');
+            // result = await btrust.checkpoints(a1, 1);
+            // expect(result.fromBlock.toString()).to.equal('0');
+            // expect(result.votes.toString()).to.equal('0');
 
             // await expect(call(btrust, 'checkpoints', [a1, 0])).resolves.to.equal(expect.objectContaining({ fromBlock: t1.blockNumber.toString(), votes: '80' }));
             // await expect(call(btrust, 'checkpoints', [a1, 1])).resolves.to.equal(expect.objectContaining({ fromBlock: '0', votes: '0' }));
@@ -171,55 +178,83 @@ describe('BTRUST', () => {
 
     describe('getPriorVotes', () => {
         it('reverts if block number >= current block', async () => {
-            await expect(call(btrust, 'getPriorVotes', [a1, 5e10])).rejects.toRevert("revert Comp::getPriorVotes: not yet determined");
+            await expect(btrust.getPriorVotes(a1, 5e10)).to.eventually.be.rejectedWith("revert Comp::getPriorVotes: not yet determined");
         });
 
         it('returns 0 if there are no checkpoints', async () => {
-            expect(await call(btrust, 'getPriorVotes', [a1, 0])).to.equal('0');
+            result = await btrust.getPriorVotes(a1, 0)
+            expect(result.toString()).to.equal('0');
         });
 
         it('returns the latest block if >= last checkpoint block', async () => {
-            const t1 = await send(btrust, 'delegate', [a1], { from: owner });
+            const t1 = await btrust.delegate(a1, { from: owner });
             await mineBlock();
             await mineBlock();
 
-            expect(await call(btrust, 'getPriorVotes', [a1, t1.blockNumber])).to.equal('10000000000000000000000000');
-            expect(await call(btrust, 'getPriorVotes', [a1, t1.blockNumber + 1])).to.equal('10000000000000000000000000');
+            result = await btrust.getPriorVotes(a1, t1.receipt.blockNumber)
+            expect(result.toString()).to.equal('1000000000000000000000000');
+
+            result = await btrust.getPriorVotes(a1, t1.receipt.blockNumber + 1)
+            expect(result.toString()).to.equal('1000000000000000000000000');
         });
 
         it('returns zero if < first checkpoint block', async () => {
             await mineBlock();
-            const t1 = await send(btrust, 'delegate', [a1], { from: owner });
+            const t1 = await btrust.delegate(a1, { from: owner });
             await mineBlock();
             await mineBlock();
 
-            expect(await call(btrust, 'getPriorVotes', [a1, t1.blockNumber - 1])).to.equal('0');
-            expect(await call(btrust, 'getPriorVotes', [a1, t1.blockNumber + 1])).to.equal('10000000000000000000000000');
+            result = await btrust.getPriorVotes(a1, t1.receipt.blockNumber - 1)
+            expect(result.toString()).to.equal('0');
+
+            result = await btrust.getPriorVotes(a1, t1.receipt.blockNumber + 1)
+            expect(result.toString()).to.equal('1000000000000000000000000');
         });
 
         it('generally returns the voting balance at the appropriate checkpoint', async () => {
-            const t1 = await send(btrust, 'delegate', [a1], { from: owner });
+            const t1 = await btrust.delegate(a1, { from: owner });
             await mineBlock();
             await mineBlock();
-            const t2 = await send(btrust, 'transfer', [a2, 10], { from: owner });
+            const t2 = await btrust.transfer(a2, 10, { from: owner });
             await mineBlock();
             await mineBlock();
-            const t3 = await send(btrust, 'transfer', [a2, 10], { from: owner });
+            const t3 = await btrust.transfer(a2, 10, { from: owner });
             await mineBlock();
             await mineBlock();
-            const t4 = await send(btrust, 'transfer', [owner, 20], { from: a2 });
+            const t4 = await btrust.transfer(owner, 20, { from: a2 });
             await mineBlock();
             await mineBlock();
 
-            expect(await call(btrust, 'getPriorVotes', [a1, t1.blockNumber - 1])).to.equal('0');
-            expect(await call(btrust, 'getPriorVotes', [a1, t1.blockNumber])).to.equal('10000000000000000000000000');
-            expect(await call(btrust, 'getPriorVotes', [a1, t1.blockNumber + 1])).to.equal('10000000000000000000000000');
-            expect(await call(btrust, 'getPriorVotes', [a1, t2.blockNumber])).to.equal('9999999999999999999999990');
-            expect(await call(btrust, 'getPriorVotes', [a1, t2.blockNumber + 1])).to.equal('9999999999999999999999990');
-            expect(await call(btrust, 'getPriorVotes', [a1, t3.blockNumber])).to.equal('9999999999999999999999980');
-            expect(await call(btrust, 'getPriorVotes', [a1, t3.blockNumber + 1])).to.equal('9999999999999999999999980');
-            expect(await call(btrust, 'getPriorVotes', [a1, t4.blockNumber])).to.equal('10000000000000000000000000');
-            expect(await call(btrust, 'getPriorVotes', [a1, t4.blockNumber + 1])).to.equal('10000000000000000000000000');
+            result = await btrust.getPriorVotes(a1, t1.receipt.blockNumber - 1);
+            expect(result.toString()).to.equal('0');
+
+            result = await btrust.getPriorVotes(a1, t1.receipt.blockNumber);
+            expect(result.toString()).to.equal('1000000000000000000000000');
+
+            result = await btrust.getPriorVotes(a1, t1.receipt.blockNumber + 1)
+            expect(result.toString()).to.equal('1000000000000000000000000');
+
+            result = await btrust.getPriorVotes(a1, t2.receipt.blockNumber);
+            expect(result.toString()).to.equal('999999999999999999999990');
+
+            result = await btrust.getPriorVotes(a1, t2.receipt.blockNumber + 1);
+            expect(result.toString()).to.equal('999999999999999999999990');
+
+            result = await btrust.getPriorVotes(a1, t3.receipt.blockNumber);
+            expect(result.toString()).to.equal('999999999999999999999980');
+
+            
+            result = await btrust.getPriorVotes(a1, t3.receipt.blockNumber + 1);
+            expect(result.toString()).to.equal('999999999999999999999980');
+
+            result = await btrust.getPriorVotes(a1, t3.receipt.blockNumber + 1);
+            expect(result.toString()).to.equal('999999999999999999999980');
+
+            result = await btrust.getPriorVotes(a1, t4.receipt.blockNumber);
+            expect(result.toString()).to.equal('1000000000000000000000000');
+
+            result = await btrust.getPriorVotes(a1, t4.receipt.blockNumber + 1);
+            expect(result.toString()).to.equal('1000000000000000000000000');
         });
     });
 });
