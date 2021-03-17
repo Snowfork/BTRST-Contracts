@@ -12,7 +12,7 @@ contract BTRUST {
     uint8 public constant decimals = 18;
 
     /// @notice Total number of tokens in circulation
-    uint public constant totalSupply = 1000000e18; // 10 million BTRUST
+    uint public constant totalSupply = 250000000e18; // 250 million BTRUST
 
     /// @notice Allowance amounts on behalf of others
     mapping (address => mapping (address => uint96)) internal allowances;

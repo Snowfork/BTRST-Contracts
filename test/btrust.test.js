@@ -40,7 +40,7 @@ describe('BTRUST', () => {
     describe('balanceOf', () => {
         it('grants to initial account', async () => {
             const result = await btrust.balanceOf(owner);
-            expect(result.toString()).to.equal("1000000000000000000000000");
+            expect(result.toString()).to.equal("250000000000000000000000000");
         });
     });
 
@@ -192,10 +192,10 @@ describe('BTRUST', () => {
             await mineBlock();
 
             result = await btrust.getPriorVotes(a1, t1.receipt.blockNumber)
-            expect(result.toString()).to.equal('1000000000000000000000000');
+            expect(result.toString()).to.equal('250000000000000000000000000');
 
             result = await btrust.getPriorVotes(a1, t1.receipt.blockNumber + 1)
-            expect(result.toString()).to.equal('1000000000000000000000000');
+            expect(result.toString()).to.equal('250000000000000000000000000');
         });
 
         it('returns zero if < first checkpoint block', async () => {
@@ -208,7 +208,7 @@ describe('BTRUST', () => {
             expect(result.toString()).to.equal('0');
 
             result = await btrust.getPriorVotes(a1, t1.receipt.blockNumber + 1)
-            expect(result.toString()).to.equal('1000000000000000000000000');
+            expect(result.toString()).to.equal('250000000000000000000000000');
         });
 
         it('generally returns the voting balance at the appropriate checkpoint', async () => {
@@ -229,32 +229,32 @@ describe('BTRUST', () => {
             expect(result.toString()).to.equal('0');
 
             result = await btrust.getPriorVotes(a1, t1.receipt.blockNumber);
-            expect(result.toString()).to.equal('1000000000000000000000000');
+            expect(result.toString()).to.equal('250000000000000000000000000');
 
             result = await btrust.getPriorVotes(a1, t1.receipt.blockNumber + 1)
-            expect(result.toString()).to.equal('1000000000000000000000000');
+            expect(result.toString()).to.equal('250000000000000000000000000');
 
             result = await btrust.getPriorVotes(a1, t2.receipt.blockNumber);
-            expect(result.toString()).to.equal('999999999999999999999990');
+            expect(result.toString()).to.equal('249999999999999999999999990');
 
             result = await btrust.getPriorVotes(a1, t2.receipt.blockNumber + 1);
-            expect(result.toString()).to.equal('999999999999999999999990');
+            expect(result.toString()).to.equal('249999999999999999999999990');
 
             result = await btrust.getPriorVotes(a1, t3.receipt.blockNumber);
-            expect(result.toString()).to.equal('999999999999999999999980');
+            expect(result.toString()).to.equal('249999999999999999999999980');
 
             
             result = await btrust.getPriorVotes(a1, t3.receipt.blockNumber + 1);
-            expect(result.toString()).to.equal('999999999999999999999980');
+            expect(result.toString()).to.equal('249999999999999999999999980');
 
             result = await btrust.getPriorVotes(a1, t3.receipt.blockNumber + 1);
-            expect(result.toString()).to.equal('999999999999999999999980');
+            expect(result.toString()).to.equal('249999999999999999999999980');
 
             result = await btrust.getPriorVotes(a1, t4.receipt.blockNumber);
-            expect(result.toString()).to.equal('1000000000000000000000000');
+            expect(result.toString()).to.equal('250000000000000000000000000');
 
             result = await btrust.getPriorVotes(a1, t4.receipt.blockNumber + 1);
-            expect(result.toString()).to.equal('1000000000000000000000000');
+            expect(result.toString()).to.equal('250000000000000000000000000');
         });
     });
 });
