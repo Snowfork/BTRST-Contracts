@@ -15,25 +15,25 @@ const {
   const BigNumber = require('bignumber.js');
   const chalk = require('chalk');
   
-  async function enfranchise(comp, actor, amount) {
-    await comp.transfer(actor, etherMantissa(amount));
-    await comp.delegate(actor, { from: actor });
+  async function enfranchise(btrust, actor, amount) {
+    await btrust.transfer(actor, etherMantissa(amount));
+    await btrust.delegate(actor, { from: actor });
   }
   
   describe("governorAlpha#castVote/2", () => {
-    let comp, gov, root, a1, accounts;
+    let btrust, gov, root, a1, accounts;
     let targets, values, signatures, callDatas, proposalId;
   
     before(async () => {
       [root, a1, ...accounts] = await web3.eth.getAccounts();
-      comp = await BTRUST.new(root);
-      gov = await GovernorAlpha.new(address(0), comp.address, root)
+      btrust = await BTRUST.new(root);
+      gov = await GovernorAlpha.new(address(0), btrust.address, root)
   
       targets = [a1];
       values = ["0"];
       signatures = ["getBalanceOf(address)"];
       callDatas = [encodeParameters(['address'], [a1])];
-      await comp.delegate(root);
+      await btrust.delegate(root);
       await gov.propose(targets, values, signatures, callDatas, "do nothing");
       proposalId = await gov.latestProposalIds(root);
     //   proposalId = proposalId.toString();
@@ -74,7 +74,7 @@ const {
   
         it("and we add that ForVotes", async () => {
           actor = accounts[1];
-          await enfranchise(comp, actor, 400001);
+          await enfranchise(btrust, actor, 400001);
   
           await gov.propose(targets, values, signatures, callDatas, "do nothing", { from: actor });
           proposalId = await gov.latestProposalIds(actor);
@@ -89,7 +89,7 @@ const {
   
         it("or AgainstVotes corresponding to the caller's support flag.", async () => {
           actor = accounts[3];
-          await enfranchise(comp, actor, 400001);
+          await enfranchise(btrust, actor, 400001);
   
           await gov.propose(targets, values, signatures, callDatas, "do nothing", { from: actor });
           proposalId = await gov.latestProposalIds(actor);
@@ -105,7 +105,7 @@ const {
   
       describe('castVoteBySig', () => {
         const Domain = (gov) => ({
-          name: 'Compound Governor Alpha',
+          name: 'BTRUST Governor Alpha',
           chainId: 1, // await web3.eth.net.getId(); See: https://github.com/trufflesuite/ganache-core/issues/515
           verifyingContract: gov.address
         });
@@ -125,7 +125,7 @@ const {
             console.log(signatory.address)
             console.log(a1.privateKey)
 
-          await enfranchise(comp, signatory.address, 400001);
+          await enfranchise(btrust, signatory.address, 400001);
           await gov.propose(targets, values, signatures, callDatas, "do nothing", { from: signatory.address });
           proposalId = await gov.latestProposalIds(signatory.address);;
   
@@ -144,8 +144,8 @@ const {
       it.skip("receipt uses one load", async () => {
         let actor = accounts[2];
         let actor2 = accounts[3];
-        await enfranchise(comp, actor, 400001);
-        await enfranchise(comp, actor2, 400001);
+        await enfranchise(btrust, actor, 400001);
+        await enfranchise(btrust, actor2, 400001);
         await gov.propose(targets, values, signatures, callDatas, "do nothing", { from: actor });
         proposalId = await gov.latestProposalIds(actor);;
 
@@ -207,8 +207,8 @@ const {
   
     before(async () => {
         [root, acct, ...accounts] = await web3.eth.getAccounts();
-        comp = await BTRUST.new(root);
-        gov = await GovernorAlpha.new(address(0), comp.address, address(0))
+        btrust = await BTRUST.new(root);
+        gov = await GovernorAlpha.new(address(0), btrust.address, address(0))
     });
   
     let trivialProposal, targets, values, signatures, callDatas;
@@ -218,7 +218,7 @@ const {
       values = ["0"];
       signatures = ["getBalanceOf(address)"];
       callDatas = [encodeParameters(['address'], [acct])];
-      await comp.delegate(root);
+      await btrust.delegate(root);
       await gov.propose(targets, values, signatures, callDatas, "do nothing");
       proposalBlock = +(await web3.eth.getBlockNumber());
       proposalId = await gov.latestProposalIds(root);
@@ -316,8 +316,8 @@ const {
       });
   
       it.skip("This function returns the id of the newly created proposal. # proposalId(n) = succ(proposalId(n-1))", async () => {
-        await comp.transfer(accounts[2], etherMantissa(400001));
-        await comp.delegate(accounts[2], { from: accounts[2] });
+        await btrust.transfer(accounts[2], etherMantissa(400001));
+        await btrust.delegate(accounts[2], { from: accounts[2] });
   
         await mineBlock();
         let nextProposalId = await gov.propose(targets, values, signatures, callDatas, "yoot", { from: accounts[2] });
@@ -326,8 +326,8 @@ const {
       });
   
       it.skip("emits log with id and description", async () => {
-        await send(comp, 'transfer', [accounts[3], etherMantissa(400001)]);
-        await send(comp, 'delegate', [accounts[3]], { from: accounts[3] });
+        await send(btrust, 'transfer', [accounts[3], etherMantissa(400001)]);
+        await send(btrust, 'delegate', [accounts[3]], { from: accounts[3] });
         await mineBlock();
         let nextProposalId = await gov.methods['propose'](targets, values, signatures, callDatas, "yoot").call({ from: accounts[3] });
   
