@@ -1,5 +1,6 @@
 require("@nomiclabs/hardhat-web3");
 require("@nomiclabs/hardhat-truffle5");
+require("hardhat-deploy");
 
 const secrets = require('./secrets');
 
@@ -9,12 +10,18 @@ module.exports = {
     ropsten: {
       url: `https://ropsten.infura.io/v3/${secrets.infuraProjectID}`,
       gas: 5500000,
-      from: '0x9138b7116da971dd0aad20882fa236f255fbd396',
-      accounts: {
-        mnemonic: secrets.deployerMnemonicRopsten,
-        path: "m/44'/1'/0'/0/",
-        count: 1
-      }
+      accounts: [`0x${secrets.deployerPrivateKey}`],
+      from: secrets.deployerAccount,
+      live: true,
+      tags: ["staging"]
+    }
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0, // default take the first account as deployer
+    },
+    foundationInitialAddress: {
+      default: 0,
     }
   }
 };
