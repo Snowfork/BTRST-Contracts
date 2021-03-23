@@ -1,18 +1,18 @@
 const { expect } = require("hardhat");
 
-const DecisionModel = artifacts.require("DecisionModel");
+const GovernanceDecisions = artifacts.require("GovernanceDecisions");
 require("chai")
     .use(require("chai-as-promised"))
     .expect();
 
-describe("DecisionModel", () => {
+describe("GovernanceDecisions", () => {
     let root, governor, a1, accounts;
     let decisionModel;
 
     beforeEach(async () => {
         [root, governor, a1, ...accounts] = await web3.eth.getAccounts();
 
-        decisionModel = await DecisionModel.new(governor);
+        decisionModel = await GovernanceDecisions.new(governor);
     });
 
     describe("marketplaceFee", () => {
