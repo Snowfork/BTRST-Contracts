@@ -11,12 +11,12 @@ const {
     mineBlock
 } = require('./Utils/Ethereum');
 
-const configBTRUST = require('../btrust-config.js')
 const EIP712 = require('./Utils/EIP712');
-const { name, symbol } = configBTRUST
-
 
 describe('BTRUST', () => {
+    const name = "BTRUST";
+    const symbol = "BTRUST";
+
     let owner, a1, a2, accounts, chainId, result;
     let btrust;
 
