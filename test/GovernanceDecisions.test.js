@@ -1,5 +1,3 @@
-const { expect } = require("hardhat");
-
 const GovernanceDecisions = artifacts.require("GovernanceDecisions");
 require("chai")
     .use(require("chai-as-promised"))
