@@ -33,4 +33,26 @@ describe("GovernanceDecisions", () => {
             expect(decisionModel.setMarketplaceFee(20, { from: a1 })).to.eventually.be.rejectedWith("revert DecisionModel::setMarketplaceFee ACCESS FORBIDDEN")
         });
     });
+
+    describe("marketplaceCatgories", () => {
+        it("allows governor to add category", async () => {
+            await decisionModel.addMarketplaceCategory("sample category", { from: governor });
+            expect(await decisionModel.getMarketplaceCategories()).to.include("sample category")
+        });
+
+        it("reverts if the sender is not governor", async () => {
+            expect(decisionModel.addMarketplaceCategory("sample category", { from: a1 })).to.eventually.be.rejectedWith("revert DecisionModel::setMarketplaceFee ACCESS FORBIDDEN")
+        });
+    });
+
+    describe("memberships", () => {
+        it("allows governor to add membership", async () => {
+            await decisionModel.addMember("sample member", { from: governor });
+            expect(await decisionModel.getMemberships()).to.include("sample member")
+        });
+
+        it("reverts if the sender is not governor", async () => {
+            expect(decisionModel.addMember("sample member", { from: a1 })).to.eventually.be.rejectedWith("revert DecisionModel::setMarketplaceFee ACCESS FORBIDDEN")
+        });
+    });
 });  

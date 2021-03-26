@@ -8,8 +8,12 @@ contract GovernanceDecisions is AccessControl {
     bytes32 public constant GOVERNOR_ROLE = keccak256("GOVERNOR_ROLE");
 
     uint8 public marketplaceFee;
+    string[] private marketplaceCategories;
+    string[] private memberships;
 
     event MarketplaceFeeChanged(uint8 oldFee, uint8 newFee);
+    event MarketplaceCategoryAdded(string category);
+    event MemberAdded(string member);
 
     constructor(address governor_) public {
         _setupRole(GOVERNOR_ROLE, governor_);
@@ -24,5 +28,27 @@ contract GovernanceDecisions is AccessControl {
         oldFee = marketplaceFee;
         marketplaceFee = fee;
         emit MarketplaceFeeChanged(oldFee, marketplaceFee);
+    }
+
+    function addMarketplaceCategory(string memory category) public {
+        require(hasRole(GOVERNOR_ROLE, msg.sender), "DecisionModel::setMarketplaceFee ACCESS FORBIDDEN");
+
+        marketplaceCategories.push(category);
+        emit MarketplaceCategoryAdded(category);
+    }
+
+    function getMarketplaceCategories() public view returns (string[] memory) {
+        return marketplaceCategories;
+    }
+
+    function addMember(string memory member) public {
+        require(hasRole(GOVERNOR_ROLE, msg.sender), "DecisionModel::setMarketplaceFee ACCESS FORBIDDEN");
+
+        memberships.push(member);
+        emit MemberAdded(member);
+    }
+
+    function getMemberships() public view returns (string[] memory) {
+        return memberships;
     }
 }
