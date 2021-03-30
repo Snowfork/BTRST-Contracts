@@ -8,10 +8,10 @@ contract GovernorAlpha {
     string public constant name = "BTRUST Governor Alpha";
 
     /// @notice The number of votes in support of a proposal required in order for a quorum to be reached and for a vote to succeed
-    function quorumVotes() public pure returns (uint) { return 400000e18; } // 400,000 = 4% of BTRUST
+    function quorumVotes() public pure returns (uint) { return 25000000e18; } // 25,000,000 = 10% of BTRUST
 
     /// @notice The number of votes required in order for a voter to become a proposer
-    function proposalThreshold() public pure returns (uint) { return 100000e18; } // 100,000 = 1% of BTRUST
+    function proposalThreshold() public pure returns (uint) { return 2500000e18; } // 2,500,000 = 1% of BTRUST
 
     /// @notice The maximum number of actions that can be included in a proposal
     function proposalMaxOperations() public pure returns (uint) { return 10; } // 10 actions

@@ -74,7 +74,7 @@ const {
   
         it("and we add that ForVotes", async () => {
           actor = accounts[1];
-          await enfranchise(btrust, actor, 400001);
+          await enfranchise(btrust, actor, 2500001);
   
           await gov.propose(targets, values, signatures, callDatas, "do nothing", { from: actor });
           proposalId = await gov.latestProposalIds(actor);
@@ -84,12 +84,12 @@ const {
           await gov.castVote(proposalId, true, { from: actor });
   
           let afterFors = (await gov.proposals(proposalId)).forVotes;
-          expect(new BigNumber(afterFors).toString()).to.equal(new BigNumber(beforeFors).plus(etherMantissa(400001)).toString());
+          expect(new BigNumber(afterFors).toString()).to.equal(new BigNumber(beforeFors).plus(etherMantissa(2500001)).toString());
         })
   
         it("or AgainstVotes corresponding to the caller's support flag.", async () => {
           actor = accounts[3];
-          await enfranchise(btrust, actor, 400001);
+          await enfranchise(btrust, actor, 2500001);
   
           await gov.propose(targets, values, signatures, callDatas, "do nothing", { from: actor });
           proposalId = await gov.latestProposalIds(actor);
@@ -99,7 +99,7 @@ const {
           await gov.castVote(proposalId, false, { from: actor });
   
           let afterAgainsts = (await gov.proposals(proposalId)).againstVotes;
-          expect(new BigNumber(afterAgainsts).toString()).to.equal(new BigNumber(beforeAgainsts).plus(etherMantissa(400001)).toString());
+          expect(new BigNumber(afterAgainsts).toString()).to.equal(new BigNumber(beforeAgainsts).plus(etherMantissa(2500001)).toString());
         });
       });
   
