@@ -5,7 +5,16 @@ require("hardhat-deploy");
 const secrets = require('./secrets');
 
 module.exports = {
-  solidity: "0.5.16",
+  solidity: {
+    compilers: [
+      {
+        version: "0.5.16"
+      },
+      {
+        version: "0.6.7",
+      }
+    ]
+  },
   networks: {
     ropsten: {
       url: `https://ropsten.infura.io/v3/${secrets.infuraProjectID}`,
