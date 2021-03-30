@@ -20,17 +20,17 @@ contract GovernanceDecisions is AccessControl {
         marketplaceFee = 1; // set default marketplace fee
     }
 
-    function setMarketplaceFee(uint8 fee) public {
+    function setMarketplaceFee(uint8 fee) external {
         require(hasRole(GOVERNOR_ROLE, msg.sender), "DecisionModel::setMarketplaceFee ACCESS FORBIDDEN");
         require(fee < 100, "DecisionModel::setMarketplaceFee fee must be less than 100");
-        
+
         uint8 oldFee;
         oldFee = marketplaceFee;
         marketplaceFee = fee;
         emit MarketplaceFeeChanged(oldFee, marketplaceFee);
     }
 
-    function addMarketplaceCategory(string memory category) public {
+    function addMarketplaceCategory(string calldata category) external {
         require(hasRole(GOVERNOR_ROLE, msg.sender), "DecisionModel::setMarketplaceFee ACCESS FORBIDDEN");
 
         marketplaceCategories.push(category);
@@ -41,7 +41,7 @@ contract GovernanceDecisions is AccessControl {
         return marketplaceCategories;
     }
 
-    function addMember(string memory member) public {
+    function addMember(string calldata member) external {
         require(hasRole(GOVERNOR_ROLE, msg.sender), "DecisionModel::setMarketplaceFee ACCESS FORBIDDEN");
 
         memberships.push(member);
