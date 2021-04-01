@@ -1,4 +1,4 @@
-Timelock = artifacts.require("Timelock")
+const TimelockHarness = artifacts.require("TimelockHarness")
 const {
     encodeParameters,
     etherUnsigned,
@@ -8,11 +8,11 @@ const {
 require("chai")
   .use(require("chai-as-promised"))
   .expect();
-  
+
   const oneWeekInSeconds = etherUnsigned(7 * 24 * 60 * 60);
   const zero = etherUnsigned(0);
   const gracePeriod = oneWeekInSeconds.multipliedBy(2);
-  
+
   describe('Timelock', () => {
     let root, notAdmin, newAdmin;
     let blockTimestamp;
@@ -26,16 +26,16 @@ require("chai")
     let revertData = encodeParameters(['uint256'], [etherUnsigned(60 * 60).toFixed()]);
     let eta;
     let queuedTxHash;
-  
+
     beforeEach(async () => {
       [root, notAdmin, newAdmin] = await web3.eth.getAccounts();
-      timelock = await Timelock.new(root, delay);
-  
+      timelock = await TimelockHarness.new(root, delay);
+
       blockTimestamp = etherUnsigned(100);
       await freezeTime(blockTimestamp.toNumber())
       target = timelock.address;
       eta = blockTimestamp.plus(delay);
-  
+
       queuedTxHash = keccak256(
         encodeParameters(
           ['address', 'uint256', 'string', 'bytes', 'uint256'],
@@ -43,25 +43,25 @@ require("chai")
         )
       );
     });
-  
+
     describe('constructor', () => {
       it('sets address of admin', async () => {
         let configuredAdmin = await timelock.admin();
         expect(configuredAdmin).to.equal(root);
       });
-  
+
       it('sets delay', async () => {
         let configuredDelay = await timelock.delay();
         expect(configuredDelay.toString()).to.equal(delay.toString());
       });
     });
-  
+
     describe('setDelay', () => {
       it('requires msg.sender to be Timelock', async () => {
         expect(timelock.setDelay(delay, { from: root })).to.eventually.be.rejectedWith('revert Timelock::setDelay: Call must come from Timelock.');
       });
     });
-  
+
     describe('setPendingAdmin', () => {
       it('requires msg.sender to be Timelock', async () => {
         expect(
@@ -69,33 +69,33 @@ require("chai")
         ).to.eventually.be.rejectedWith('revert Timelock::setPendingAdmin: Call must come from Timelock.');
       });
     });
-  
-    describe.skip('acceptAdmin', () => {
+
+    describe('acceptAdmin', () => {
       afterEach(async () => {
-        await send(timelock, 'harnessSetAdmin', [root], { from: root });
+        await timelock.harnessSetAdmin(root, { from: root });
       });
-  
+
       it('requires msg.sender to be pendingAdmin', async () => {
-        await expect(
-          send(timelock, 'acceptAdmin', { from: notAdmin })
-        ).rejects.toRevert('revert Timelock::acceptAdmin: Call must come from pendingAdmin.');
+        expect(
+          timelock.acceptAdmin({ from: notAdmin })
+        ).to.eventually.be.rejectedWith('revert Timelock::acceptAdmin: Call must come from pendingAdmin.');
       });
   
       it('sets pendingAdmin to address 0 and changes admin', async () => {
-        await send(timelock, 'harnessSetPendingAdmin', [newAdmin], { from: root });
-        const pendingAdminBefore = await call(timelock, 'pendingAdmin');
-        expect(pendingAdminBefore).toEqual(newAdmin);
+        await timelock.harnessSetPendingAdmin(newAdmin, { from: root });
+        const pendingAdminBefore = await timelock.pendingAdmin();
+        expect(pendingAdminBefore).to.equal(newAdmin);
   
-        const result = await send(timelock, 'acceptAdmin', { from: newAdmin });
-        const pendingAdminAfter = await call(timelock, 'pendingAdmin');
-        expect(pendingAdminAfter).toEqual('0x0000000000000000000000000000000000000000');
+        const result = await timelock.acceptAdmin({ from: newAdmin });
+        const pendingAdminAfter = await timelock.pendingAdmin();
+        expect(pendingAdminAfter).to.equal('0x0000000000000000000000000000000000000000');
   
-        const timelockAdmin = await call(timelock, 'admin');
-        expect(timelockAdmin).toEqual(newAdmin);
+        const timelockAdmin = await timelock.admin();
+        expect(timelockAdmin).to.equal(newAdmin);
   
-        expect(result).toHaveLog('NewAdmin', {
-          newAdmin
-        });
+        // expect(result).toHaveLog('NewAdmin', {
+        //   newAdmin
+        // });
       });
     });
   
@@ -142,13 +142,13 @@ require("chai")
   
     describe.skip('cancelTransaction', () => {
       beforeEach(async () => {
-        await send(timelock, 'queueTransaction', [target, value, signature, data, eta], { from: root });
+        await timelock.queueTransaction(target, value, signature, data, eta, { from: root });
       });
   
       it('requires admin to be msg.sender', async () => {
-        await expect(
-          send(timelock, 'cancelTransaction', [target, value, signature, data, eta], { from: notAdmin })
-        ).rejects.toRevert('revert Timelock::cancelTransaction: Call must come from admin.');
+        expect(
+          timelock.cancelTransaction(target, value, signature, data, eta, { from: notAdmin })
+        ).to.eventually.be.rejectedWith('revert Timelock::cancelTransaction: Call must come from admin.');
       });
   
       it('sets hash from true to false in queuedTransactions mapping', async () => {
