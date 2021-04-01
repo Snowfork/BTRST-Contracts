@@ -1,6 +1,7 @@
 require("@nomiclabs/hardhat-web3");
 require("@nomiclabs/hardhat-truffle5");
 require("hardhat-deploy");
+require("@nomiclabs/hardhat-ethers");
 
 const secrets = require('./secrets');
 
