@@ -417,7 +417,6 @@ const {
         const txQueue2 = await gov.queue(proposalId2);
       });
     });
-  });
   
   // const path = require('path');
   // const solparse = require('solparse');
