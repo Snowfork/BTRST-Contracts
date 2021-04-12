@@ -17,6 +17,8 @@ const {
   const EIP712 = require('./Utils/EIP712');
   const BigNumber = require('bignumber.js');
   const chalk = require('chalk');
+  const path = require('path');
+  const solparse = require('solparse');
   
   async function enfranchise(btrust, actor, amount) {
     await btrust.transfer(actor, etherMantissa(amount));
@@ -39,7 +41,6 @@ const {
       await btrust.delegate(root);
       await gov.propose(targets, values, signatures, callDatas, "do nothing");
       proposalId = await gov.latestProposalIds(root);
-    //   proposalId = proposalId.toString();
     });
   
     describe("We must revert if:", () => {
@@ -228,10 +229,6 @@ const {
       trivialProposal = await gov.proposals(proposalId);
     });
   
-    // it("Given the sender's GetPriorVotes for the immediately previous block is above the Proposal Threshold (e.g. 2%), the given proposal is added to all proposals, given the following settings", async () => {
-    //   test.todo('depends on get prior votes and delegation and voting');
-    // });
-  
     describe("simple initialization", () => {
       it("ID is set to a globally unique identifier", async () => {
         expect(trivialProposal.id.toString()).to.equal(proposalId.toString());
@@ -324,7 +321,6 @@ const {
   
         await mineBlock();
         let nextProposalId = await gov.propose(targets, values, signatures, callDatas, "yoot", { from: accounts[2] });
-        // let nextProposalId = await call(gov, 'propose', [targets, values, signatures, callDatas, "second proposal"], { from: accounts[2] });
         expect(nextProposalId.toString()).to.equal(trivialProposal.id + 1);
       });
   
@@ -418,153 +414,150 @@ const {
       });
     });
   
-  // const path = require('path');
-  // const solparse = require('solparse');
+  const governorAlphaPath = path.join(__dirname, '../', 'contracts', '/GovernorAlpha.sol');
   
-  // const governorAlphaPath = path.join(__dirname, '../', 'contracts', 'Governance/GovernorAlpha.sol');
+  const statesInverted = solparse
+    .parseFile(governorAlphaPath)
+    .body
+    .find(k => k.type === 'ContractStatement')
+    .body
+    .find(k => k.name == 'ProposalState')
+    .members
   
-  // const statesInverted = solparse
-  //   .parseFile(governorAlphaPath)
-  //   .body
-  //   .find(k => k.type === 'ContractStatement')
-  //   .body
-  //   .find(k => k.name == 'ProposalState')
-  //   .members
+  const states = Object.entries(statesInverted).reduce((obj, [key, value]) => ({ ...obj, [value]: key }), {});
   
-  // const states = Object.entries(statesInverted).reduce((obj, [key, value]) => ({ ...obj, [value]: key }), {});
+  describe.skip('GovernorAlpha#state/1', () => {
+    let btrust, gov, root, acct, delay, timelock;
   
-  // describe.skip('GovernorAlpha#state/1', () => {
-  //   let btrust, gov, root, acct, delay, timelock;
+    before(async () => {
+      await freezeTime(100);
+      [root, acct, ...accounts] = accounts;
+      btrust = await deploy('btrust', [root]);
+      delay = etherUnsigned(2 * 24 * 60 * 60).multipliedBy(2)
+      timelock = await deploy('TimelockHarness', [root, delay]);
+      gov = await deploy('GovernorAlpha', [timelock._address, btrust._address, root]);
+      await send(timelock, "harnessSetAdmin", [gov._address])
+      await send(btrust, 'transfer', [acct, etherMantissa(4000000)]);
+      await send(btrust, 'delegate', [acct], { from: acct });
+    });
   
-  //   before(async () => {
-  //     await freezeTime(100);
-  //     [root, acct, ...accounts] = accounts;
-  //     btrust = await deploy('btrust', [root]);
-  //     delay = etherUnsigned(2 * 24 * 60 * 60).multipliedBy(2)
-  //     timelock = await deploy('TimelockHarness', [root, delay]);
-  //     gov = await deploy('GovernorAlpha', [timelock._address, btrust._address, root]);
-  //     await send(timelock, "harnessSetAdmin", [gov._address])
-  //     await send(btrust, 'transfer', [acct, etherMantissa(4000000)]);
-  //     await send(btrust, 'delegate', [acct], { from: acct });
-  //   });
+    let trivialProposal, targets, values, signatures, callDatas;
+    before(async () => {
+      targets = [root];
+      values = ["0"];
+      signatures = ["getBalanceOf(address)"]
+      callDatas = [encodeParameters(['address'], [acct])];
+      await send(btrust, 'delegate', [root]);
+      await send(gov, 'propose', [targets, values, signatures, callDatas, "do nothing"]);
+      proposalId = await call(gov, 'latestProposalIds', [root]);
+      trivialProposal = await call(gov, "proposals", [proposalId])
+    })
   
-  //   let trivialProposal, targets, values, signatures, callDatas;
-  //   before(async () => {
-  //     targets = [root];
-  //     values = ["0"];
-  //     signatures = ["getBalanceOf(address)"]
-  //     callDatas = [encodeParameters(['address'], [acct])];
-  //     await send(btrust, 'delegate', [root]);
-  //     await send(gov, 'propose', [targets, values, signatures, callDatas, "do nothing"]);
-  //     proposalId = await call(gov, 'latestProposalIds', [root]);
-  //     trivialProposal = await call(gov, "proposals", [proposalId])
-  //   })
+    it("Invalid for proposal not found", async () => {
+      await expect(call(gov, 'state', ["5"])).rejects.toRevert("revert GovernorAlpha::state: invalid proposal id")
+    })
   
-  //   it.only("Invalid for proposal not found", async () => {
-  //     await expect(call(gov, 'state', ["5"])).rejects.toRevert("revert GovernorAlpha::state: invalid proposal id")
-  //   })
+    it("Pending", async () => {
+      expect(await call(gov, 'state', [trivialProposal.id], {})).toEqual(states["Pending"])
+    })
   
-  //   it("Pending", async () => {
-  //     expect(await call(gov, 'state', [trivialProposal.id], {})).toEqual(states["Pending"])
-  //   })
+    it("Active", async () => {
+      await mineBlock()
+      await mineBlock()
+      expect(await call(gov, 'state', [trivialProposal.id], {})).toEqual(states["Active"])
+    })
   
-  //   it("Active", async () => {
-  //     await mineBlock()
-  //     await mineBlock()
-  //     expect(await call(gov, 'state', [trivialProposal.id], {})).toEqual(states["Active"])
-  //   })
+    it("Canceled", async () => {
+      await send(btrust, 'transfer', [accounts[0], etherMantissa(4000000)]);
+      await send(btrust, 'delegate', [accounts[0]], { from: accounts[0] });
+      await mineBlock()
+      await send(gov, 'propose', [targets, values, signatures, callDatas, "do nothing"], { from: accounts[0] })
+      let newProposalId = await call(gov, 'proposalCount')
   
-  //   it("Canceled", async () => {
-  //     await send(btrust, 'transfer', [accounts[0], etherMantissa(4000000)]);
-  //     await send(btrust, 'delegate', [accounts[0]], { from: accounts[0] });
-  //     await mineBlock()
-  //     await send(gov, 'propose', [targets, values, signatures, callDatas, "do nothing"], { from: accounts[0] })
-  //     let newProposalId = await call(gov, 'proposalCount')
+      // send away the delegates
+      await send(btrust, 'delegate', [root], { from: accounts[0] });
+      await send(gov, 'cancel', [newProposalId])
   
-  //     // send away the delegates
-  //     await send(btrust, 'delegate', [root], { from: accounts[0] });
-  //     await send(gov, 'cancel', [newProposalId])
+      expect(await call(gov, 'state', [+newProposalId])).toEqual(states["Canceled"])
+    })
   
-  //     expect(await call(gov, 'state', [+newProposalId])).toEqual(states["Canceled"])
-  //   })
+    it("Defeated", async () => {
+      // travel to end block
+      await advanceBlocks(20000)
   
-  //   it("Defeated", async () => {
-  //     // travel to end block
-  //     await advanceBlocks(20000)
+      expect(await call(gov, 'state', [trivialProposal.id])).toEqual(states["Defeated"])
+    })
   
-  //     expect(await call(gov, 'state', [trivialProposal.id])).toEqual(states["Defeated"])
-  //   })
+    it("Succeeded", async () => {
+      await mineBlock()
+      const { reply: newProposalId } = await both(gov, 'propose', [targets, values, signatures, callDatas, "do nothing"], { from: acct })
+      await mineBlock()
+      await send(gov, 'castVote', [newProposalId, true])
+      await advanceBlocks(20000)
   
-  //   it("Succeeded", async () => {
-  //     await mineBlock()
-  //     const { reply: newProposalId } = await both(gov, 'propose', [targets, values, signatures, callDatas, "do nothing"], { from: acct })
-  //     await mineBlock()
-  //     await send(gov, 'castVote', [newProposalId, true])
-  //     await advanceBlocks(20000)
+      expect(await call(gov, 'state', [newProposalId])).toEqual(states["Succeeded"])
+    })
   
-  //     expect(await call(gov, 'state', [newProposalId])).toEqual(states["Succeeded"])
-  //   })
+    it("Queued", async () => {
+      await mineBlock()
+      const { reply: newProposalId } = await both(gov, 'propose', [targets, values, signatures, callDatas, "do nothing"], { from: acct })
+      await mineBlock()
+      await send(gov, 'castVote', [newProposalId, true])
+      await advanceBlocks(20000)
   
-  //   it("Queued", async () => {
-  //     await mineBlock()
-  //     const { reply: newProposalId } = await both(gov, 'propose', [targets, values, signatures, callDatas, "do nothing"], { from: acct })
-  //     await mineBlock()
-  //     await send(gov, 'castVote', [newProposalId, true])
-  //     await advanceBlocks(20000)
+      await send(gov, 'queue', [newProposalId], { from: acct })
+      expect(await call(gov, 'state', [newProposalId])).toEqual(states["Queued"])
+    })
   
-  //     await send(gov, 'queue', [newProposalId], { from: acct })
-  //     expect(await call(gov, 'state', [newProposalId])).toEqual(states["Queued"])
-  //   })
+    it("Expired", async () => {
+      await mineBlock()
+      const { reply: newProposalId } = await both(gov, 'propose', [targets, values, signatures, callDatas, "do nothing"], { from: acct })
+      await mineBlock()
+      await send(gov, 'castVote', [newProposalId, true])
+      await advanceBlocks(20000)
   
-  //   it("Expired", async () => {
-  //     await mineBlock()
-  //     const { reply: newProposalId } = await both(gov, 'propose', [targets, values, signatures, callDatas, "do nothing"], { from: acct })
-  //     await mineBlock()
-  //     await send(gov, 'castVote', [newProposalId, true])
-  //     await advanceBlocks(20000)
+      await increaseTime(1)
+      await send(gov, 'queue', [newProposalId], { from: acct })
   
-  //     await increaseTime(1)
-  //     await send(gov, 'queue', [newProposalId], { from: acct })
+      let gracePeriod = await call(timelock, 'GRACE_PERIOD')
+      let p = await call(gov, "proposals", [newProposalId]);
+      let eta = etherUnsigned(p.eta)
   
-  //     let gracePeriod = await call(timelock, 'GRACE_PERIOD')
-  //     let p = await call(gov, "proposals", [newProposalId]);
-  //     let eta = etherUnsigned(p.eta)
+      await freezeTime(eta.plus(gracePeriod).minus(1).toNumber())
   
-  //     await freezeTime(eta.plus(gracePeriod).minus(1).toNumber())
+      expect(await call(gov, 'state', [newProposalId])).toEqual(states["Queued"])
   
-  //     expect(await call(gov, 'state', [newProposalId])).toEqual(states["Queued"])
+      await freezeTime(eta.plus(gracePeriod).toNumber())
   
-  //     await freezeTime(eta.plus(gracePeriod).toNumber())
+      expect(await call(gov, 'state', [newProposalId])).toEqual(states["Expired"])
+    })
   
-  //     expect(await call(gov, 'state', [newProposalId])).toEqual(states["Expired"])
-  //   })
+    it("Executed", async () => {
+      await mineBlock()
+      const { reply: newProposalId } = await both(gov, 'propose', [targets, values, signatures, callDatas, "do nothing"], { from: acct })
+      await mineBlock()
+      await send(gov, 'castVote', [newProposalId, true])
+      await advanceBlocks(20000)
   
-  //   it("Executed", async () => {
-  //     await mineBlock()
-  //     const { reply: newProposalId } = await both(gov, 'propose', [targets, values, signatures, callDatas, "do nothing"], { from: acct })
-  //     await mineBlock()
-  //     await send(gov, 'castVote', [newProposalId, true])
-  //     await advanceBlocks(20000)
+      await increaseTime(1)
+      await send(gov, 'queue', [newProposalId], { from: acct })
   
-  //     await increaseTime(1)
-  //     await send(gov, 'queue', [newProposalId], { from: acct })
+      let gracePeriod = await call(timelock, 'GRACE_PERIOD')
+      let p = await call(gov, "proposals", [newProposalId]);
+      let eta = etherUnsigned(p.eta)
   
-  //     let gracePeriod = await call(timelock, 'GRACE_PERIOD')
-  //     let p = await call(gov, "proposals", [newProposalId]);
-  //     let eta = etherUnsigned(p.eta)
+      await freezeTime(eta.plus(gracePeriod).minus(1).toNumber())
   
-  //     await freezeTime(eta.plus(gracePeriod).minus(1).toNumber())
+      expect(await call(gov, 'state', [newProposalId])).toEqual(states["Queued"])
+      await send(gov, 'execute', [newProposalId], { from: acct })
   
-  //     expect(await call(gov, 'state', [newProposalId])).toEqual(states["Queued"])
-  //     await send(gov, 'execute', [newProposalId], { from: acct })
+      expect(await call(gov, 'state', [newProposalId])).toEqual(states["Executed"])
   
-  //     expect(await call(gov, 'state', [newProposalId])).toEqual(states["Executed"])
+      // still executed even though would be expired
+      await freezeTime(eta.plus(gracePeriod).toNumber())
   
-  //     // still executed even though would be expired
-  //     await freezeTime(eta.plus(gracePeriod).toNumber())
-  
-  //     expect(await call(gov, 'state', [newProposalId])).toEqual(states["Executed"])
-  //   })
-  
+      expect(await call(gov, 'state', [newProposalId])).toEqual(states["Executed"])
+    })
   })
+})
   

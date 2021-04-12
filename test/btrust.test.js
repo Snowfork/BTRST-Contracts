@@ -155,24 +155,24 @@ describe('BTRUST', () => {
             result = await btrust.numCheckpoints(a1);
             console.log("t3 " + result.toString())
 
-            // result = await btrust.numCheckpoints(a1);
-            // expect(result.toString()).to.equal('1');
+            result = await btrust.numCheckpoints(a1);
+            expect(result.toString()).to.equal('1');
 
             result = await btrust.checkpoints(a1, 0);
             expect(result.fromBlock.toString()).to.equal(t1.receipt.blockNumber.toString());
             expect(result.votes.toString()).to.equal('80');
 
-            // result = await btrust.checkpoints(a1, 1);
-            // expect(result.fromBlock.toString()).to.equal('0');
-            // expect(result.votes.toString()).to.equal('0');
+            result = await btrust.checkpoints(a1, 1);
+            expect(result.fromBlock.toString()).to.equal('0');
+            expect(result.votes.toString()).to.equal('0');
 
-            // await expect(call(btrust, 'checkpoints', [a1, 0])).resolves.to.equal(expect.objectContaining({ fromBlock: t1.blockNumber.toString(), votes: '80' }));
-            // await expect(call(btrust, 'checkpoints', [a1, 1])).resolves.to.equal(expect.objectContaining({ fromBlock: '0', votes: '0' }));
-            // await expect(call(btrust, 'checkpoints', [a1, 2])).resolves.to.equal(expect.objectContaining({ fromBlock: '0', votes: '0' }));
+            await expect(call(btrust, 'checkpoints', [a1, 0])).resolves.to.equal(expect.objectContaining({ fromBlock: t1.blockNumber.toString(), votes: '80' }));
+            await expect(call(btrust, 'checkpoints', [a1, 1])).resolves.to.equal(expect.objectContaining({ fromBlock: '0', votes: '0' }));
+            await expect(call(btrust, 'checkpoints', [a1, 2])).resolves.to.equal(expect.objectContaining({ fromBlock: '0', votes: '0' }));
 
-            // const t4 = await send(btrust, 'transfer', [guy, 20], { from: owner });
-            // await expect(call(btrust, 'numCheckpoints', [a1])).resolves.to.equal('2');
-            // await expect(call(btrust, 'checkpoints', [a1, 1])).resolves.to.equal(expect.objectContaining({ fromBlock: t4.blockNumber.toString(), votes: '100' }));
+            const t4 = await send(btrust, 'transfer', [guy, 20], { from: owner });
+            await expect(call(btrust, 'numCheckpoints', [a1])).resolves.to.equal('2');
+            await expect(call(btrust, 'checkpoints', [a1, 1])).resolves.to.equal(expect.objectContaining({ fromBlock: t4.blockNumber.toString(), votes: '100' }));
         });
     });
 
