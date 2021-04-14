@@ -57,5 +57,5 @@ npx hardhat run --network <your-network> deploy
 The project deploys to Ropsten via Infura. A secrets-example.js file is included. Copy this file into secrets.js, replacing the infuraProjectID with your Infura project ID and the deployerMnemonicRopsten with the private mnemonic that the Ropsten deployer account comes from. Make sure this account has enough test Ethereum to deploy, then:
 
 ```bash
-npx hardhat run --network ropstein deploy
+npx hardhat run --network ropsten deploy
 ```
