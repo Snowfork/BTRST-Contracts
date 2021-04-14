@@ -14,7 +14,7 @@ Having said that, the contracts are based on well known, audited openzeppelin ER
 
 ## Requirements
 
-Node, NPM, Truffle 5+
+Node, NPM, Hardhat
 
 ## Usage
 
@@ -26,10 +26,16 @@ Clone the repo, then:
 npm install
 ```
 
+### Start a Local Instance 
+
+```bash
+npx hardhat node
+```
+
 ### Running Tests
 
 ```bash
-truffle test
+npx hardhat test
 ```
 
 ### Deployment
@@ -37,7 +43,13 @@ truffle test
 #### Local
 
 ```bash
-truffle migrate --network development
+npx hardhat --network localhost deploy
+```
+
+#### Other network
+
+```bash
+npx hardhat run --network <your-network> deploy
 ```
 
 #### Ropsten
@@ -45,5 +57,5 @@ truffle migrate --network development
 The project deploys to Ropsten via Infura. A secrets-example.js file is included. Copy this file into secrets.js, replacing the infuraProjectID with your Infura project ID and the deployerMnemonicRopsten with the private mnemonic that the Ropsten deployer account comes from. Make sure this account has enough test Ethereum to deploy, then:
 
 ```bash
-truffle migrate --network ropsten
+npx hardhat run --network ropsten deploy
 ```
