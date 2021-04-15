@@ -26,6 +26,14 @@ Clone the repo, then:
 npm install
 ```
 
+### Create secrets file
+
+A sample secrets file is provided, make a copy of it and replace with your project secrets. 
+
+```bash
+cp './secrets-example.js' './secrets.js'
+```
+
 ### Start a Local Instance 
 
 ```bash
