@@ -25,14 +25,32 @@ const {
     await btrust.delegate(actor, { from: actor });
   }
   
+  describe("governorAlpha", () => {
+    let gov;
+    let quorumVotes = new BigNumber(45000000e18);
+    let proposalThreshold = BigNumber(55000e18);
+    let votingPeriod = 30000;
+
+    it('sets variables during initialization', async () => {
+      gov = await GovernorAlpha.new(address(0), address(0), address(0), quorumVotes, proposalThreshold, votingPeriod);
+
+      expect(BigNumber(await gov.quorumVotes()).toString()).to.equal(quorumVotes.toString());
+      expect(BigNumber(await gov.proposalThreshold()).toString()).to.equal(proposalThreshold.toString());
+      expect((await gov.votingPeriod()).toString()).to.equal(votingPeriod.toString());
+    });
+  });
+
   describe("governorAlpha#castVote/2", () => {
     let btrust, gov, root, a1, accounts;
     let targets, values, signatures, callDatas, proposalId;
+    let quorumVotes = BigNumber(25000000e18);
+    let proposalThreshold = BigNumber(2500000e18);
+    let votingPeriod = 17280;
   
     before(async () => {
       [root, a1, ...accounts] = await web3.eth.getAccounts();
       btrust = await BTRUST.new(root);
-      gov = await GovernorAlpha.new(address(0), btrust.address, root)
+      gov = await GovernorAlpha.new(address(0), btrust.address, root, quorumVotes, proposalThreshold, votingPeriod)
   
       targets = [a1];
       values = ["0"];
@@ -208,11 +226,14 @@ const {
   
   describe('GovernorAlpha#propose/5', () => {
     let gov, root, acct;
+    let quorumVotes = BigNumber(25000000e18);
+    let proposalThreshold = BigNumber(2500000e18);
+    let votingPeriod = 17280;
   
     before(async () => {
         [root, acct, ...accounts] = await web3.eth.getAccounts();
         btrust = await BTRUST.new(root);
-        gov = await GovernorAlpha.new(address(0), btrust.address, address(0))
+        gov = await GovernorAlpha.new(address(0), btrust.address, address(0), quorumVotes, proposalThreshold, votingPeriod)
     });
   
     let trivialProposal, targets, values, signatures, callDatas;
@@ -349,6 +370,9 @@ const {
   
   describe('GovernorAlpha#queue/1', () => {
     let root, a1, a2, accounts;
+    let quorumVotes = BigNumber(25000000e18);
+    let proposalThreshold = BigNumber(2500000e18);
+    let votingPeriod = 17280;
     before(async () => {
       [root, a1, a2, ...accounts] = await web3.eth.getAccounts();
     });
@@ -357,7 +381,7 @@ const {
       it("reverts on queueing overlapping actions in same proposal", async () => {
         const timelock = await TimelockHarness.new(root, 86400 * 2);
         const btrust = await BTRUST.new(root);
-        const gov = await GovernorAlpha.new(timelock.address, btrust.address, root);
+        const gov = await GovernorAlpha.new(timelock.address, btrust.address, root, quorumVotes, proposalThreshold, votingPeriod);
         const txAdmin = await timelock.harnessSetAdmin(gov.address);
   
         await enfranchise(btrust, a1, 3e6);
@@ -382,7 +406,7 @@ const {
       it.skip("reverts on queueing overlapping actions in different proposals, works if waiting", async () => {
         const timelock = await TimelockHarness.new(root, 86400 * 2);
         const btrust = await BTRUST.new(root);
-        const gov = await GovernorAlpha.new(timelock.address, btrust.address, root);
+        const gov = await GovernorAlpha.new(timelock.address, btrust.address, root, quorumVotes, proposalThreshold, votingPeriod);
         const txAdmin = await timelock.harnessSetAdmin(gov.address);
   
         await enfranchise(btrust, a1, 3e6);

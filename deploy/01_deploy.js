@@ -28,9 +28,12 @@ module.exports = async ({
 
   console.log("----------------------------------------------------");
   console.log('Deploying GovernorAlpha');
+  let quorumVotes = '25000000';
+  let proposalThreshold = '2500000';
+  let votingPeriod = 17280;
   const governorAlpha = await deploy('GovernorAlpha', {
       from: deployer,
-      args: [timelock.address, btrust.address, foundationInitialAddress],
+      args: [timelock.address, btrust.address, foundationInitialAddress, web3.utils.toWei(quorumVotes), web3.utils.toWei(proposalThreshold), votingPeriod],
   });
   console.log("GovernorAlpha deployed to: ", governorAlpha.address);
   if (governorAlpha.address !== governorAlphaAddress) {
