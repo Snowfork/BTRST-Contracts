@@ -1,3 +1,4 @@
+const ropstenConfig = require('../ropsten.config.js');
 module.exports = async ({
   getNamedAccounts,
   deployments,
@@ -28,12 +29,10 @@ module.exports = async ({
 
   console.log("----------------------------------------------------");
   console.log('Deploying GovernorAlpha');
-  let quorumVotes = '25000000';
-  let proposalThreshold = '2500000';
-  let votingPeriod = 17280;
+  console.log(ropstenConfig.quorumVotes);
   const governorAlpha = await deploy('GovernorAlpha', {
       from: deployer,
-      args: [timelock.address, btrust.address, foundationInitialAddress, web3.utils.toWei(quorumVotes), web3.utils.toWei(proposalThreshold), votingPeriod],
+      args: [timelock.address, btrust.address, foundationInitialAddress, web3.utils.toWei(ropstenConfig.quorumVotes), web3.utils.toWei(ropstenConfig.proposalThreshold), ropstenConfig.votingPeriod],
   });
   console.log("GovernorAlpha deployed to: ", governorAlpha.address);
   if (governorAlpha.address !== governorAlphaAddress) {
