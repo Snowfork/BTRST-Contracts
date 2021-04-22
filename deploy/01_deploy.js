@@ -1,4 +1,6 @@
-const ropstenConfig = require('../ropsten.config.js');
+const btrustConfig = require('../btrust.config.js');
+const {networks: { ropsten: { timelockPeriod, quorumVotes, proposalThreshold, votingPeriod } }}  = btrustConfig
+
 module.exports = async ({
   getNamedAccounts,
   deployments,
@@ -22,17 +24,17 @@ module.exports = async ({
   console.log("----------------------------------------------------");
   const timelock = await deploy('Timelock', {
       from: deployer,
-      args: [governorAlphaAddress, 7 * 24 * 60 * 60]
+      args: [governorAlphaAddress, timelockPeriod]
   });
   console.log("Timelock deployed to: ", timelock.address);
 
 
   console.log("----------------------------------------------------");
   console.log('Deploying GovernorAlpha');
-  console.log(ropstenConfig.quorumVotes);
+  console.log(quorumVotes);
   const governorAlpha = await deploy('GovernorAlpha', {
       from: deployer,
-      args: [timelock.address, btrust.address, foundationInitialAddress, web3.utils.toWei(ropstenConfig.quorumVotes), web3.utils.toWei(ropstenConfig.proposalThreshold), ropstenConfig.votingPeriod],
+      args: [timelock.address, btrust.address, foundationInitialAddress, web3.utils.toWei(quorumVotes), web3.utils.toWei(proposalThreshold), votingPeriod],
   });
   console.log("GovernorAlpha deployed to: ", governorAlpha.address);
   if (governorAlpha.address !== governorAlphaAddress) {
