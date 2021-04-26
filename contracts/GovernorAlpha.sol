@@ -7,11 +7,14 @@ contract GovernorAlpha {
     /// @notice The name of this contract
     string public constant name = "BTRUST Governor Alpha";
 
-    /// @notice The number of votes in support of a proposal required in order for a quorum to be reached and for a vote to succeed
-    function quorumVotes() public pure returns (uint) { return 25000000e18; } // 25,000,000 = 10% of BTRUST
-
     /// @notice The number of votes required in order for a voter to become a proposer
-    function proposalThreshold() public pure returns (uint) { return 2500000e18; } // 2,500,000 = 1% of BTRUST
+    uint private _proposalThreshold;
+
+    /// @notice The number of votes in support of a proposal required in order for a quorum to be reached and for a vote to succeed
+    uint private _quorumVotes;
+
+    /// @notice The duration of voting on a proposal, in blocks
+    uint32 private _votingPeriod;
 
     /// @notice The maximum number of actions that can be included in a proposal
     function proposalMaxOperations() public pure returns (uint) { return 10; } // 10 actions
@@ -20,7 +23,6 @@ contract GovernorAlpha {
     function votingDelay() public pure returns (uint) { return 1; } // 1 block
 
     /// @notice The duration of voting on a proposal, in blocks
-    function votingPeriod() public pure returns (uint) { return 17280; } // ~3 days in blocks (assuming 15s blocks)
 
     /// @notice The address of the BTRUST Protocol Timelock
     TimelockInterface public timelock;
@@ -129,11 +131,20 @@ contract GovernorAlpha {
     /// @notice An event emitted when a proposal has been executed in the Timelock
     event ProposalExecuted(uint id);
 
-    constructor(address timelock_, address BTRUST_, address guardian_) public {
+    constructor(address timelock_, address BTRUST_, address guardian_, uint quorumVotes_, uint proposalThreshold_, uint32 votingPeriod_) public {
         timelock = TimelockInterface(timelock_);
         BTRUST = BTRUSTInterface(BTRUST_);
         guardian = guardian_;
+        _quorumVotes = quorumVotes_;
+        _proposalThreshold = proposalThreshold_;
+        _votingPeriod = votingPeriod_;
     }
+
+    function quorumVotes() public view returns (uint) { return _quorumVotes; }
+
+    function proposalThreshold() public view returns (uint) { return _proposalThreshold; } 
+
+    function votingPeriod() public view returns (uint) { return _votingPeriod; }
 
     function propose(address[] memory targets, uint[] memory values, string[] memory signatures, bytes[] memory calldatas, string memory description) public returns (uint) {
         require(BTRUST.getPriorVotes(msg.sender, sub256(block.number, 1)) > proposalThreshold(), "GovernorAlpha::propose: proposer votes below proposal threshold");
