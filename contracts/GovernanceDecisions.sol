@@ -9,11 +9,11 @@ contract GovernanceDecisions is AccessControl {
 
     uint8 public marketplaceFee;
     string[] private marketplaceCategories;
-    string[] private memberships;
+    string[] private foundationMemberships;
 
     event MarketplaceFeeChanged(uint8 oldFee, uint8 newFee);
     event MarketplaceCategoryAdded(string category);
-    event MemberAdded(string member);
+    event FoundationMemberAdded(string member);
 
     constructor(address governor_) public {
         _setupRole(GOVERNOR_ROLE, governor_);
@@ -41,14 +41,14 @@ contract GovernanceDecisions is AccessControl {
         return marketplaceCategories;
     }
 
-    function addMember(string calldata member) external {
-        require(hasRole(GOVERNOR_ROLE, msg.sender), "DecisionModel::setMarketplaceFee ACCESS FORBIDDEN");
+    function addFoundationMember(string calldata member) external {
+        require(hasRole(GOVERNOR_ROLE, msg.sender), "GovernanceDecisions::addFoundationMember ACCESS FORBIDDEN");
 
-        memberships.push(member);
-        emit MemberAdded(member);
+        foundationMemberships.push(member);
+        emit FoundationMemberAdded(member);
     }
 
     function getMemberships() public view returns (string[] memory) {
-        return memberships;
+        return foundationMemberships;
     }
 }
