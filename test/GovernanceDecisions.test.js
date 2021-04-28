@@ -47,12 +47,12 @@ describe("GovernanceDecisions", () => {
 
     describe("memberships", () => {
         it("allows governor to add membership", async () => {
-            await decisionModel.addMember("sample member", { from: governor });
+            await decisionModel.addFoundationMember("sample member", { from: governor });
             expect(await decisionModel.getMemberships()).to.include("sample member")
         });
 
         it("reverts if the sender is not governor", async () => {
-            expect(decisionModel.addMember("sample member", { from: a1 })).to.eventually.be.rejectedWith("revert DecisionModel::setMarketplaceFee ACCESS FORBIDDEN")
+            expect(decisionModel.addFoundationMember("sample member", { from: a1 })).to.eventually.be.rejectedWith("revert DecisionModel::setMarketplaceFee ACCESS FORBIDDEN")
         });
     });
 });  
