@@ -17,7 +17,7 @@ contract GovernanceDecisions is AccessControl {
 
     constructor(address governor_) public {
         _setupRole(GOVERNOR_ROLE, governor_);
-        marketplaceFee = 1; // set default marketplace fee
+        marketplaceFee = 10; // set default marketplace fee
     }
 
     function setMarketplaceFee(uint8 fee) external {
