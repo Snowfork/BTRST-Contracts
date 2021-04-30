@@ -46,7 +46,7 @@ module.exports = async ({
   console.log('Deploying GovernanceDecisions');
   const governanceDecisions = await deploy('GovernanceDecisions',{
     from: deployer,
-    args: [governorAlphaAddress]
+    args: [timelock.address]
   });
   console.log("GovernanceDecisions deployed to: ", governanceDecisions.address);
 };
