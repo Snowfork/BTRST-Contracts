@@ -8,7 +8,7 @@ module.exports = async ({
   const {deploy} = deployments;
   const {deployer, foundationInitialAddress} = await getNamedAccounts();
   const nonce = await web3.eth.getTransactionCount(deployer)
-  const governorAlphaAddress = ethers.utils.getContractAddress({ from: deployer, nonce: nonce+2 });
+  const governorAlphaAddress = ethers.utils.getContractAddress({ from: deployer, nonce: nonce+1 });
 
   // PLEASE DON'T CHANGE ORDER OF DEPLOYMNET"
 
@@ -31,7 +31,6 @@ module.exports = async ({
 
   console.log("----------------------------------------------------");
   console.log('Deploying GovernorAlpha');
-  console.log(quorumVotes);
   const governorAlpha = await deploy('GovernorAlpha', {
       from: deployer,
       args: [timelock.address, btrust.address, foundationInitialAddress, web3.utils.toWei(quorumVotes), web3.utils.toWei(proposalThreshold), votingPeriod],

@@ -1,5 +1,5 @@
 {
-    "targets": ["0x2349E4DaFFa5F78E2cb4Ff46FBB193d614230Dc7"],
+    "targets": ["0xa1cb5A8218DA61492f202f3E9309cED72b4e1D60"],
     "values": ["0"],
     "signatures": ["setMarketplaceFee(uint8)"],
     "callDatas": ["0x0000000000000000000000000000000000000000000000000000000000000014"],
