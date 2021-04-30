@@ -2,6 +2,9 @@
     "targets": ["0xf61E0C9d284508C284ba5d8a2eB2829581974E43"],
     "values": ["0"],
     "signatures": ["transfer(address,uint256)"],
-    "callDatas": ["0x000000000000000000000000d22506fbcb0fc301459ca8adddbd82c2895d1ccf00000000000000000000000000000000000000000000000000000000004c4b40"],
+    "parameters": {
+        "types": ["address", "uint256"],
+        "values": ["0xd22506fBCB0FC301459CA8aDDDBD82C2895D1Ccf", "20"]
+    },
     "description": "sample description"
 }
