@@ -16,13 +16,13 @@ describe("GovernanceDecisions", () => {
     describe("marketplaceFee", () => {
         it("has default fee", async () => {
             let result = await decisionModel.marketplaceFee();
-            expect(result.toString()).to.equal("1")
+            expect(result.toString()).to.equal("10")
         });
 
         it("allows governor to set fee", async () => {
-            await decisionModel.setMarketplaceFee(10, { from: governor });
+            await decisionModel.setMarketplaceFee(20, { from: governor });
             let result = await decisionModel.marketplaceFee();
-            expect(result.toString()).to.equal("10")
+            expect(result.toString()).to.equal("20")
         });
 
         it("reverts if the fee is greater than 99", async () => {
@@ -30,7 +30,7 @@ describe("GovernanceDecisions", () => {
         })
 
         it("reverts if the sender is not governor", async () => {
-            expect(decisionModel.setMarketplaceFee(20, { from: a1 })).to.eventually.be.rejectedWith("revert DecisionModel::setMarketplaceFee ACCESS FORBIDDEN")
+            expect(decisionModel.setMarketplaceFee(30, { from: a1 })).to.eventually.be.rejectedWith("revert DecisionModel::setMarketplaceFee ACCESS FORBIDDEN")
         });
     });
 
