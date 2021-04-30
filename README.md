@@ -67,3 +67,23 @@ The project deploys to Ropsten via Infura. A secrets-example.js file is included
 ```bash
 npx hardhat run --network ropsten deploy
 ```
+
+## Sample proposals
+
+`sample-proposals` directory contains few examples of how to create proposals. Below is one such example of creating proposal.
+
+#### **`proposal.json`**
+```json
+{
+    "targets": ["0xf61E0C9d284508C284ba5d8a2eB2829581974E43"],
+    "values": ["0"],
+    "signatures": ["transfer(address,uint256)"],
+    "callDatas": ["0x000000000000000000000000d22506fbcb0fc301459ca8adddbd82c2895d1ccf00000000000000000000000000000000000000000000000000000000004c4b40"],
+    "description": "sample description"
+}
+```
+
+Create above proposal by running following script
+```bash
+HARDHAT_NETWORK=ropsten PRIVATE_KEY=your-key node ./createNewProposal.js ./proposal.json
+```
