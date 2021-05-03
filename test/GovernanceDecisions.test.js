@@ -26,11 +26,11 @@ describe("GovernanceDecisions", () => {
         });
 
         it("reverts if the fee is greater than 99", async () => {
-            expect(decisionModel.setMarketplaceFee(100, { from: governor })).to.eventually.be.rejectedWith("revert DecisionModel::setMarketplaceFee fee must be less than 100")
+            return expect(decisionModel.setMarketplaceFee(100, { from: governor })).to.be.rejectedWith("revert GovernanceDecisions::setMarketplaceFee fee must be less than 100")
         })
 
         it("reverts if the sender is not governor", async () => {
-            expect(decisionModel.setMarketplaceFee(30, { from: a1 })).to.eventually.be.rejectedWith("revert DecisionModel::setMarketplaceFee ACCESS FORBIDDEN")
+            return expect(decisionModel.setMarketplaceFee(30, { from: a1 })).to.be.rejectedWith("revert GovernanceDecisions::setMarketplaceFee ACCESS FORBIDDEN")
         });
     });
 
@@ -41,7 +41,7 @@ describe("GovernanceDecisions", () => {
         });
 
         it("reverts if the sender is not governor", async () => {
-            expect(decisionModel.addMarketplaceCategory("sample category", { from: a1 })).to.eventually.be.rejectedWith("revert DecisionModel::setMarketplaceFee ACCESS FORBIDDEN")
+            return expect(decisionModel.addMarketplaceCategory("sample category", { from: a1 })).to.be.rejectedWith("revert GovernanceDecisions::addMarketplaceCategory ACCESS FORBIDDEN")
         });
     });
 
@@ -52,7 +52,7 @@ describe("GovernanceDecisions", () => {
         });
 
         it("reverts if the sender is not governor", async () => {
-            expect(decisionModel.addFoundationMember("sample member", { from: a1 })).to.eventually.be.rejectedWith("revert DecisionModel::setMarketplaceFee ACCESS FORBIDDEN")
+            return expect(decisionModel.addFoundationMember("sample member", { from: a1 })).to.be.rejectedWith("revert GovernanceDecisions::addFoundationMember ACCESS FORBIDDEN")
         });
     });
 });  
