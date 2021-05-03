@@ -56,21 +56,21 @@ describe('BTRUST', () => {
 
         it('reverts if the signatory is invalid', async () => {
             const delegatee = owner, nonce = 0, expiry = 0;
-            expect(btrust.delegateBySig(delegatee, nonce, expiry, 0, '0x0', '0xbad')).to.eventually.be.rejectedWith("BTRUST::delegateBySig: invalid signature")
+            return expect(btrust.delegateBySig(delegatee, nonce, expiry, 0, '0x0', '0xbad')).to.be.rejectedWith("BTRUST::delegateBySig: invalid signature")
         });
 
         it('reverts if the nonce is bad ', async () => {
             const delegatee = owner, nonce = 1, expiry = 0;
             const signatory = web3.eth.accounts.create();
             const { v, r, s } = EIP712.sign(Domain(btrust), 'Delegation', { delegatee, nonce, expiry }, Types, signatory.privateKey);
-            expect(btrust.delegateBySig(delegatee, nonce, expiry, v, r, s)).to.eventually.be.rejectedWith("revert BTRUST::delegateBySig: invalid nonce");
+            return expect(btrust.delegateBySig(delegatee, nonce, expiry, v, r, s)).to.be.rejectedWith("revert BTRUST::delegateBySig: invalid nonce");
         });
 
         it('reverts if the signature has expired', async () => {
             const delegatee = owner, nonce = 0, expiry = 0;
             const signatory = web3.eth.accounts.create();
             const { v, r, s } = EIP712.sign(Domain(btrust), 'Delegation', { delegatee, nonce, expiry }, Types, signatory.privateKey);
-            expect(btrust.delegateBySig(delegatee, nonce, expiry, v, r, s)).to.eventually.be.rejectedWith("revert BTRUST::delegateBySig: signature expired");
+            return expect(btrust.delegateBySig(delegatee, nonce, expiry, v, r, s)).to.be.rejectedWith("revert BTRUST::delegateBySig: signature expired");
         });
 
         it('delegates on behalf of the signatory', async () => {
@@ -178,7 +178,7 @@ describe('BTRUST', () => {
 
     describe('getPriorVotes', () => {
         it('reverts if block number >= current block', async () => {
-            await expect(btrust.getPriorVotes(a1, 5e10)).to.eventually.be.rejectedWith("revert BTRUST::getPriorVotes: not yet determined");
+            return await expect(btrust.getPriorVotes(a1, 5e10)).to.be.rejectedWith("revert BTRUST::getPriorVotes: not yet determined");
         });
 
         it('returns 0 if there are no checkpoints', async () => {

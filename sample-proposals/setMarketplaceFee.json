@@ -2,6 +2,9 @@
     "targets": ["0xa1cb5A8218DA61492f202f3E9309cED72b4e1D60"],
     "values": ["0"],
     "signatures": ["setMarketplaceFee(uint8)"],
-    "callDatas": ["0x0000000000000000000000000000000000000000000000000000000000000014"],
+    "parameters": {
+        "types": ["uint8"],
+        "values": ["20"]
+    },
     "description": "sample description"
 }

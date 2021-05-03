@@ -47,17 +47,17 @@ npx hardhat test
 ```
 
 ### Deployment
-
+> **_NOTE:_**  Always deploy contracts from scratch using `--reset` flag.
 #### Local
 
 ```bash
-npx hardhat --network localhost deploy
+npx hardhat --network localhost deploy --reset
 ```
 
 #### Other network
 
 ```bash
-npx hardhat run --network <your-network> deploy
+npx hardhat run --network <your-network> deploy --reset
 ```
 
 #### Ropsten
@@ -65,7 +65,7 @@ npx hardhat run --network <your-network> deploy
 The project deploys to Ropsten via Infura. A secrets-example.js file is included. Copy this file into secrets.js, replacing the infuraProjectID with your Infura project ID and the deployerMnemonicRopsten with the private mnemonic that the Ropsten deployer account comes from. Make sure this account has enough test Ethereum to deploy, then:
 
 ```bash
-npx hardhat run --network ropsten deploy
+npx hardhat run --network ropsten deploy --reset
 ```
 
 ## Sample proposals
@@ -78,7 +78,10 @@ npx hardhat run --network ropsten deploy
     "targets": ["0xf61E0C9d284508C284ba5d8a2eB2829581974E43"],
     "values": ["0"],
     "signatures": ["transfer(address,uint256)"],
-    "callDatas": ["0x000000000000000000000000d22506fbcb0fc301459ca8adddbd82c2895d1ccf00000000000000000000000000000000000000000000000000000000004c4b40"],
+    "parameters": {
+        "types": ["address", "uint256"],
+        "values": ["0xd22506fBCB0FC301459CA8aDDDBD82C2895D1Ccf", "20"]
+    },
     "description": "sample description"
 }
 ```
