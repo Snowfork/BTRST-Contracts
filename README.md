@@ -28,13 +28,13 @@ npm install
 
 ### Create secrets file
 
-A sample secrets file is provided, make a copy of it and replace with your project secrets. 
+A sample secrets file is provided, make a copy of it and replace with your project secrets.
 
 ```bash
 cp './secrets-example.js' './secrets.js'
 ```
 
-### Start a Local Instance 
+### Start a Local Instance
 
 ```bash
 npx hardhat node
@@ -70,6 +70,7 @@ npx hardhat run --network ropsten deploy --reset
 
 ## Sample proposals
 
+### Creating a new proposal
 `sample-proposals` directory contains few examples of how to create proposals. Below is one such example of creating proposal.
 
 #### **`proposal.json`**
@@ -86,7 +87,12 @@ npx hardhat run --network ropsten deploy --reset
 }
 ```
 
-Create above proposal by running following script
+Create a copy of the sample, modify the json as needed, and then create the proposal by running following script:
 ```bash
-HARDHAT_NETWORK=ropsten PRIVATE_KEY=your-key node ./createNewProposal.js ./proposal.json
+HARDHAT_NETWORK=ropsten PRIVATE_KEY=your-key node ./scripts/createNewProposal.js ../modified-proposal.json
+```
+
+### Cancelling a proposal
+```bash
+HARDHAT_NETWORK=ropsten PRIVATE_KEY=your-key node ./scripts/cancelProposal.js PROPOSAL_ID
 ```
