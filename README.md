@@ -28,11 +28,16 @@ npm install
 
 ### Create secrets file
 
-A sample secrets file is provided, make a copy of it and replace with your project secrets.
+A sample secrets file is provided, make a copy of it and replace with your project secrets and configuration.
 
 ```bash
 cp './secrets-example.js' './secrets.js'
 ```
+
+Modify it as follows:
+ - infuraProjectID: This needs to be a project id for [Infura](https://infura.io/). You can get one by creating your own Infura account and project.
+ - deployerPrivateKey: This needs to be the private key of the account you want to deploy from or create proposals from. It must have sufficient gas to pay for transactions,
+ - deployerAccount: This needs to be the address of the same account as above
 
 ### Start a Local Instance
 
@@ -62,7 +67,7 @@ npx hardhat run --network <your-network> deploy --reset
 
 #### Ropsten
 
-The project deploys to Ropsten via Infura. A secrets-example.js file is included. Copy this file into secrets.js, replacing the infuraProjectID with your Infura project ID and the deployerMnemonicRopsten with the private mnemonic that the Ropsten deployer account comes from. Make sure this account has enough test Ethereum to deploy, then:
+The project deploys to Ropsten via Infura. Make sure you have configured your setup for deployment as described in the installation steps. Also make sure the configured account has enough test Ethereum to deploy, then:
 
 ```bash
 npx hardhat run --network ropsten deploy --reset
@@ -91,6 +96,8 @@ Create a copy of the sample, modify the json as needed, and then create the prop
 ```bash
 HARDHAT_NETWORK=ropsten PRIVATE_KEY=your-key node ./scripts/createNewProposal.js ../modified-proposal.json
 ```
+
+**NOTE:** Make sure you have configured your setup for deployment as described in the installation steps. Also make sure the private key for used has enough test Ethereum to make the transaction
 
 ### Cancelling a proposal
 ```bash
