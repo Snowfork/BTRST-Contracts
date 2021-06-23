@@ -16,6 +16,8 @@ Having said that, the contracts are based on well known, audited openzeppelin ER
 
 Node, NPM, Hardhat
 
+**NOTE:** If you are not familiar with Hardhat or with interacting with Ethereum as a developer, we suggest doing this tutorial first: https://hardhat.org/tutorial/
+
 ## Usage
 
 ### Installation
