@@ -1,8 +1,6 @@
 pragma solidity ^0.5.16;
 pragma experimental ABIEncoderV2;
 
-import "hardhat/console.sol";
-
 contract GovernorAlpha {
     /// @notice The name of this contract
     string public constant name = "BTRUST Governor Alpha";
