@@ -4,7 +4,7 @@
 
 This is the git repository for the BTRUST token. It contains a openzeppelin-based ERC20 token and truffle deployment and configuration for testing and deployment to various networks.
 
-The token is currently deployed on Ropsten at: **0xb8d9ba701728d2ebda3042f0183efc4d4982f6d8**
+The token is currently deployed on Ropsten at: **0x8ad553b014105b17ebb308a0f928bdf2c6355cf0**
 
 ## Disclaimer
 
