@@ -80,24 +80,12 @@ npx hardhat run --network ropsten deploy --reset
 ### Creating a new proposal
 `sample-proposals` directory contains few examples of how to create proposals. Below is one such example of creating proposal.
 
-#### **`proposal.json`**
-```json
-{
-    "targets": ["0xf61E0C9d284508C284ba5d8a2eB2829581974E43"],
-    "values": ["0"],
-    "signatures": ["transfer(address,uint256)"],
-    "parameters": {
-        "types": ["address", "uint256"],
-        "values": ["0xd22506fBCB0FC301459CA8aDDDBD82C2895D1Ccf", "20"]
-    },
-    "description": "sample description"
-}
-```
-
-Create a copy of the sample, modify the json as needed, and then create the proposal by running following script:
+Create a copy of the most relevant sample, modify the json as needed, and then create the proposal by running following script:
 ```bash
 HARDHAT_NETWORK=ropsten PRIVATE_KEY=your-key node ./scripts/createNewProposal.js ../modified-proposal.json
 ```
+
+When modifying the proposal, note that the description field is in Markdown, with the first line/heading being used as the title of the proposal and the remainder being used as the description, for example:``` #Add Foundation Member\nSample description ```
 
 **NOTE:** Make sure you have configured your setup for deployment as described in the installation steps. Also make sure the private key for used has enough test Ethereum to make the transaction
 
