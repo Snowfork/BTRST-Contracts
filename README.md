@@ -8,9 +8,11 @@ The token is currently deployed on Ropsten at: **0xf61E0C9d284508C284ba5d8a2eB28
 
 ## Disclaimer
 
-This codebase, including all smart contract components, have not been professionally audited and are not intended for use in a production environment. As such, users should NOT trust the system to securely hold mainnet funds without their own research.
+This is still alpha software and is intended for use in a production environment. As such, users should NOT trust the system to securely hold high amounts of mainnet funds without their own research.
 
-Having said that, the contracts are based on well known, audited openzeppelin ERC20 token libraries and so are likely to have the same security as them.
+Having said that, the contracts are based on well known, audited openzeppelin ERC20 token libraries and Compound governance so are likely to have the same security as them.
+
+This codebase has been professionally audited. The audit can be seen here: https://drive.google.com/file/d/1vFdxVaBy1CFS8sEa2l6P4uii-pOihbet/view
 
 ## Requirements
 
