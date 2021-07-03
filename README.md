@@ -20,10 +20,9 @@ Node, NPM, Hardhat
 
 **NOTE:** If you are not familiar with Hardhat or with interacting with Ethereum as a developer, we suggest doing this tutorial first: https://hardhat.org/tutorial/
 
-## Usage
+## Installation
 
-### Installation
-
+### Setup
 Clone the repo, then:
 
 ```bash
@@ -55,21 +54,40 @@ npx hardhat node
 npx hardhat test
 ```
 
-### Deployment
+## Usage
+
+### Creating a new proposal
+`sample-proposals` directory contains few examples of how to create proposals. Below is one such example of creating proposal.
+
+Create a copy of the most relevant sample, modify the json as needed, and then create the proposal by running following script:
+```bash
+HARDHAT_NETWORK=ropsten PRIVATE_KEY=your-key node ./scripts/createNewProposal.js ../modified-proposal.json
+```
+
+When modifying the proposal, note that the description field is in Markdown, with the first line/heading being used as the title of the proposal and the remainder being used as the description, for example:``` #Add Foundation Member\nSample description ```
+
+**NOTE:** Make sure you have configured your setup for deployment as described in the installation steps. Also make sure the private key for used has enough test Ethereum to make the transaction
+
+### Cancelling a proposal
+```bash
+HARDHAT_NETWORK=ropsten PRIVATE_KEY=your-key node ./scripts/cancelProposal.js PROPOSAL_ID
+```
+
+## Deployment
 > **_NOTE:_**  Always deploy contracts from scratch using `--reset` flag.
-#### Local
+### Local
 
 ```bash
 npx hardhat --network localhost deploy --reset
 ```
 
-#### Other network
+### Other network
 
 ```bash
 npx hardhat run --network <your-network> deploy --reset
 ```
 
-#### Ropsten
+### Ropsten
 
 The project deploys to Ropsten via Infura. Make sure you have configured your setup for deployment as described in the installation steps. Also make sure the configured account has enough test Ethereum to deploy, then:
 
@@ -77,7 +95,7 @@ The project deploys to Ropsten via Infura. Make sure you have configured your se
 npx hardhat run --network ropsten deploy --reset
 ```
 
-#### Mainnet
+### Mainnet
 
 For mainnet, the process is similar to Ropsten, though config needs to be setup first.
 
@@ -112,22 +130,3 @@ npx hardhat run --network mainnet deploy --reset
 ```
 
 **Note:** (The initial foundation address is given ALL BTRUST tokens initially, and also has guardian control over Governance until they abdicate that role)
-
-## Sample proposals
-
-### Creating a new proposal
-`sample-proposals` directory contains few examples of how to create proposals. Below is one such example of creating proposal.
-
-Create a copy of the most relevant sample, modify the json as needed, and then create the proposal by running following script:
-```bash
-HARDHAT_NETWORK=ropsten PRIVATE_KEY=your-key node ./scripts/createNewProposal.js ../modified-proposal.json
-```
-
-When modifying the proposal, note that the description field is in Markdown, with the first line/heading being used as the title of the proposal and the remainder being used as the description, for example:``` #Add Foundation Member\nSample description ```
-
-**NOTE:** Make sure you have configured your setup for deployment as described in the installation steps. Also make sure the private key for used has enough test Ethereum to make the transaction
-
-### Cancelling a proposal
-```bash
-HARDHAT_NETWORK=ropsten PRIVATE_KEY=your-key node ./scripts/cancelProposal.js PROPOSAL_ID
-```
