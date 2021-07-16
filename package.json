@@ -23,7 +23,7 @@
     "chalk": "^2.4.2",
     "ethers": "^5.1.0",
     "hardhat": "^2.1.1",
-    "hardhat-deploy": "^0.7.0-beta.48",
+    "hardhat-deploy": "^0.7.11",
     "hardhat-truffle5": "^1.0.1",
     "hardhat-web3": "^1.0.1",
     "solparse": "^2.2.8",

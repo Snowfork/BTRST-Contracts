@@ -18,13 +18,13 @@ npx hardhat test
 ### Local
 
 ```bash
-npx hardhat --network localhost deploy --reset
+npx hardhat deploy --network localhost --reset
 ```
 
 ### Other network
 
 ```bash
-npx hardhat run --network <your-network> deploy --reset
+npx hardhat deploy --network <your-network> --reset
 ```
 
 ### Ropsten
@@ -32,7 +32,7 @@ npx hardhat run --network <your-network> deploy --reset
 The project deploys to Ropsten via Infura. Make sure you have configured your setup for deployment as described in the installation steps. Also make sure the configured account has enough test Ethereum to deploy, then:
 
 ```bash
-npx hardhat run --network ropsten deploy --reset
+npx hardhat deploy --network ropsten  --reset
 ```
 
 ### Mainnet

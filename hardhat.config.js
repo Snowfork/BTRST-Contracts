@@ -23,6 +23,7 @@ module.exports = {
       accounts: [`0x${secrets.deployerPrivateKey}`],
       from: secrets.deployerAccount,
       live: true,
+      gasPrice: 10000000000,
       tags: ["staging"]
     }
   },
