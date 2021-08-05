@@ -66,7 +66,7 @@ For mainnet, the process is similar to Ropsten, though config needs to be setup 
 3. Then to deploy:
 
 ```bash
-HARDHAT_NETWORK=mainnet PRIVATE_KEY=________ npx hardhat deploy --network mainnet  --reset --verbose
+npx hardhat deploy --network mainnet  --reset --verbose
 ```
 
 **Note:** (The initial foundation address is given ALL BTRUST tokens initially, and also has guardian control over Governance until they abdicate that role)
