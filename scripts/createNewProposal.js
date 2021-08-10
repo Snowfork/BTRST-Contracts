@@ -2,7 +2,7 @@ const network = process.env.HARDHAT_NETWORK
 const hre = require("hardhat");
 const ethers = hre.ethers;
 const GovernorAlpha = require(`../deployments/${network}/GovernorAlpha.json`)
-const { encodeParameters } = require('../test/Utils/Ethereum');
+const { encodeParameters } = require('../test/utils/Ethereum');
 const proposal = require(process.argv[2])
 
 async function main() {
