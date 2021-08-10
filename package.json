@@ -1,7 +1,7 @@
 {
   "name": "braintrust-token",
   "version": "1.0.0",
-  "description": "BTRUST token for the Braintrust marketplace",
+  "description": "BTRST token for the Braintrust marketplace",
   "directories": {
     "test": "test"
   },

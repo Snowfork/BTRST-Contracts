@@ -39,7 +39,7 @@ npx hardhat deploy --network ropsten  --reset
 
 For mainnet, the process is similar to Ropsten, though config needs to be setup first.
 
-1. Copy the ropsten config (here)[https://github.com/Snowfork/BTRUST-Contracts/blob/master/btrst.config.js#L3] into similar config as needed for mainnet, for example:
+1. Copy the ropsten config (here)[https://github.com/Snowfork/BTRST-Contracts/blob/master/btrst.config.js#L3] into similar config as needed for mainnet, for example:
 ```
     networks: {
         ropsten: { ... },
@@ -51,7 +51,7 @@ For mainnet, the process is similar to Ropsten, though config needs to be setup 
         }
 ```
 
-2. Set the namedAccounts for mainnet (here)[https://github.com/Snowfork/BTRUST-Contracts/blob/master/hardhat.config.js#L29] based on which accounts you want to deploy from and to have as the initial foundation address, for example:
+2. Set the namedAccounts for mainnet (here)[https://github.com/Snowfork/BTRST-Contracts/blob/master/hardhat.config.js#L29] based on which accounts you want to deploy from and to have as the initial foundation address, for example:
 ```
     deployer: {
       default: 0, // default take the first account as deployer
