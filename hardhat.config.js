@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-web3");
+require("@nomiclabs/hardhat-etherscan");
 require("@nomiclabs/hardhat-truffle5");
 require("hardhat-deploy");
 require("@nomiclabs/hardhat-ethers");
@@ -25,6 +26,15 @@ module.exports = {
       live: true,
       gasPrice: 10000000000,
       tags: ["staging"]
+    },
+    mainnet: {
+      url: `https://mainnet.infura.io/v3/${secrets.infuraProjectID}`,
+      gas: "auto",
+      accounts: [`0x${secrets.deployerPrivateKey}`],
+      from: secrets.deployerAccount,
+      live: true,
+      gasPrice: "auto",
+      tags: ["production"]
     }
   },
   namedAccounts: {
@@ -34,5 +44,8 @@ module.exports = {
     foundationInitialAddress: {
       default: 0,
     }
+  },
+  etherscan: {
+    apiKey: "H117EANZ5ZQUECZYX4592IYEQ5ABAYXQW3"
   }
 };

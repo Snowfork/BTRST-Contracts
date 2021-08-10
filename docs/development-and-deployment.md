@@ -39,7 +39,7 @@ npx hardhat deploy --network ropsten  --reset
 
 For mainnet, the process is similar to Ropsten, though config needs to be setup first.
 
-1. Copy the ropsten config (here)[https://github.com/Snowfork/BTRUST-Contracts/blob/master/btrust.config.js#L3] into similar config as needed for mainnet, for example:
+1. Copy the ropsten config (here)[https://github.com/Snowfork/BTRUST-Contracts/blob/master/btrst.config.js#L3] into similar config as needed for mainnet, for example:
 ```
     networks: {
         ropsten: { ... },
@@ -69,4 +69,4 @@ For mainnet, the process is similar to Ropsten, though config needs to be setup 
 npx hardhat deploy --network mainnet  --reset --verbose
 ```
 
-**Note:** (The initial foundation address is given ALL BTRUST tokens initially, and also has guardian control over Governance until they abdicate that role)
+**Note:** (The initial foundation address is given ALL BTRST tokens initially, and also has guardian control over Governance until they abdicate that role)

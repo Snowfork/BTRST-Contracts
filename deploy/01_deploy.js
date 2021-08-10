@@ -1,5 +1,5 @@
-const btrustConfig = require('../btrust.config.js');
-const { networks: { ropsten: { timelockPeriod, quorumVotes, proposalThreshold, votingPeriod } } } = btrustConfig
+const btrstConfig = require('../btrst.config.js');
+const { networks: { ropsten: { timelockPeriod, quorumVotes, proposalThreshold, votingPeriod } } } = btrstConfig
 
 module.exports = async ({
   getNamedAccounts,
@@ -13,12 +13,12 @@ module.exports = async ({
   // PLEASE DON'T CHANGE ORDER OF DEPLOYMNET"
 
   console.log("----------------------------------------------------");
-  console.log(`Deploying BTRUST with: { deployer: ${deployer}, foundationInitialAddress: ${foundationInitialAddress} }}`);
-  const btrust = await deploy('BTRUST', {
+  console.log(`Deploying BTRST with: { deployer: ${deployer}, foundationInitialAddress: ${foundationInitialAddress} }}`);
+  const btrst = await deploy('BTRST', {
     from: deployer,
     args: [foundationInitialAddress],
   });
-  console.log("BTRUST deployed to: ", btrust.address);
+  console.log("BTRST deployed to: ", btrst.address);
 
 
   console.log("----------------------------------------------------");
@@ -33,7 +33,7 @@ module.exports = async ({
   console.log('Deploying GovernorAlpha');
   const governorAlpha = await deploy('GovernorAlpha', {
     from: deployer,
-    args: [timelock.address, btrust.address, foundationInitialAddress, web3.utils.toWei(quorumVotes), web3.utils.toWei(proposalThreshold), votingPeriod],
+    args: [timelock.address, btrst.address, foundationInitialAddress, web3.utils.toWei(quorumVotes), web3.utils.toWei(proposalThreshold), votingPeriod],
   });
   console.log("GovernorAlpha deployed to: ", governorAlpha.address);
   if (governorAlpha.address !== governorAlphaAddress) {

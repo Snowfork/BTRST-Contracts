@@ -1,4 +1,4 @@
-const BTRUST = artifacts.require("BTRUST");
+const BTRST = artifacts.require("BTRST");
 require("chai")
     .use(require("chai-as-promised"))
     .expect();
@@ -13,9 +13,9 @@ const {
 
 const EIP712 = require('./Utils/EIP712');
 
-describe('BTRUST', () => {
-    const name = "BTRUST";
-    const symbol = "BTRUST";
+describe('BTRST', () => {
+    const name = "BTRST";
+    const symbol = "BTRST";
 
     let owner, a1, a2, accounts, chainId, result;
     let btrust;
@@ -24,7 +24,7 @@ describe('BTRUST', () => {
         [owner, a1, a2, ...accounts] = await web3.eth.getAccounts();
         chainId = await web3.eth.net.getId();// See: https://github.com/trufflesuite/ganache-core/issues/515
 
-        btrust = await BTRUST.new(owner);
+        btrust = await BTRST.new(owner);
     });
 
     describe('metadata', () => {
@@ -56,21 +56,21 @@ describe('BTRUST', () => {
 
         it('reverts if the signatory is invalid', async () => {
             const delegatee = owner, nonce = 0, expiry = 0;
-            return expect(btrust.delegateBySig(delegatee, nonce, expiry, 0, '0x0', '0xbad')).to.be.rejectedWith("BTRUST::delegateBySig: invalid signature")
+            return expect(btrust.delegateBySig(delegatee, nonce, expiry, 0, '0x0', '0xbad')).to.be.rejectedWith("BTRST::delegateBySig: invalid signature")
         });
 
         it('reverts if the nonce is bad ', async () => {
             const delegatee = owner, nonce = 1, expiry = 0;
             const signatory = web3.eth.accounts.create();
             const { v, r, s } = EIP712.sign(Domain(btrust), 'Delegation', { delegatee, nonce, expiry }, Types, signatory.privateKey);
-            return expect(btrust.delegateBySig(delegatee, nonce, expiry, v, r, s)).to.be.rejectedWith("revert BTRUST::delegateBySig: invalid nonce");
+            return expect(btrust.delegateBySig(delegatee, nonce, expiry, v, r, s)).to.be.rejectedWith("revert BTRST::delegateBySig: invalid nonce");
         });
 
         it('reverts if the signature has expired', async () => {
             const delegatee = owner, nonce = 0, expiry = 0;
             const signatory = web3.eth.accounts.create();
             const { v, r, s } = EIP712.sign(Domain(btrust), 'Delegation', { delegatee, nonce, expiry }, Types, signatory.privateKey);
-            return expect(btrust.delegateBySig(delegatee, nonce, expiry, v, r, s)).to.be.rejectedWith("revert BTRUST::delegateBySig: signature expired");
+            return expect(btrust.delegateBySig(delegatee, nonce, expiry, v, r, s)).to.be.rejectedWith("revert BTRST::delegateBySig: signature expired");
         });
 
         it('delegates on behalf of the signatory', async () => {
@@ -131,12 +131,12 @@ describe('BTRUST', () => {
             await btrust.transfer(guy, '100'); //give an account a few tokens for readability
             result = await btrust.numCheckpoints(a1);
             await expect(result.toString()).to.equal('0');
-        
+
             await network.provider.send("evm_setAutomine", [false])  // result = await minerStop();
 
             let t1 = btrust.delegate(a1, { from: guy });
             let t2 = btrust.transfer(a2, 10, { from: guy });
-            let t3 = btrust.transfer(a2, 10, { from: guy });    
+            let t3 = btrust.transfer(a2, 10, { from: guy });
 
             await network.provider.send("evm_setAutomine", [true]) // await minerStart();
 
@@ -178,7 +178,7 @@ describe('BTRUST', () => {
 
     describe('getPriorVotes', () => {
         it('reverts if block number >= current block', async () => {
-            return await expect(btrust.getPriorVotes(a1, 5e10)).to.be.rejectedWith("revert BTRUST::getPriorVotes: not yet determined");
+            return await expect(btrust.getPriorVotes(a1, 5e10)).to.be.rejectedWith("revert BTRST::getPriorVotes: not yet determined");
         });
 
         it('returns 0 if there are no checkpoints', async () => {
@@ -243,7 +243,7 @@ describe('BTRUST', () => {
             result = await btrust.getPriorVotes(a1, t3.receipt.blockNumber);
             expect(result.toString()).to.equal('249999999999999999999999980');
 
-            
+
             result = await btrust.getPriorVotes(a1, t3.receipt.blockNumber + 1);
             expect(result.toString()).to.equal('249999999999999999999999980');
 

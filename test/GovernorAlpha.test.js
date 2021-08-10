@@ -1,4 +1,4 @@
-const BTRUST = artifacts.require("BTRUST");
+const BTRST = artifacts.require("BTRST");
 const GovernorAlpha = artifacts.require("GovernorAlpha");
 const TimelockHarness = artifacts.require("TimelockHarness")
 require("chai")
@@ -49,7 +49,7 @@ const {
   
     before(async () => {
       [root, a1, ...accounts] = await web3.eth.getAccounts();
-      btrust = await BTRUST.new(root);
+      btrust = await BTRST.new(root);
       gov = await GovernorAlpha.new(address(0), btrust.address, root, quorumVotes, proposalThreshold, votingPeriod)
   
       targets = [a1];
@@ -127,7 +127,7 @@ const {
   
       describe('castVoteBySig', () => {
         const Domain = (gov) => ({
-          name: 'BTRUST Governor Alpha',
+          name: 'BTRST Governor Alpha',
           chainId: 1, // await web3.eth.net.getId(); See: https://github.com/trufflesuite/ganache-core/issues/515
           verifyingContract: gov.address
         });
@@ -232,7 +232,7 @@ const {
   
     before(async () => {
         [root, acct, ...accounts] = await web3.eth.getAccounts();
-        btrust = await BTRUST.new(root);
+        btrust = await BTRST.new(root);
         gov = await GovernorAlpha.new(address(0), btrust.address, address(0), quorumVotes, proposalThreshold, votingPeriod)
     });
   
@@ -380,7 +380,7 @@ const {
     describe("overlapping actions", () => {
       it.skip("reverts on queueing overlapping actions in same proposal", async () => {
         const timelock = await TimelockHarness.new(root, 86400 * 2);
-        const btrust = await BTRUST.new(root);
+        const btrust = await BTRST.new(root);
         const gov = await GovernorAlpha.new(timelock.address, btrust.address, root, quorumVotes, proposalThreshold, votingPeriod);
         const txAdmin = await timelock.harnessSetAdmin(gov.address);
   
@@ -405,7 +405,7 @@ const {
   
       it.skip("reverts on queueing overlapping actions in different proposals, works if waiting", async () => {
         const timelock = await TimelockHarness.new(root, 86400 * 2);
-        const btrust = await BTRUST.new(root);
+        const btrust = await BTRST.new(root);
         const gov = await GovernorAlpha.new(timelock.address, btrust.address, root, quorumVotes, proposalThreshold, votingPeriod);
         const txAdmin = await timelock.harnessSetAdmin(gov.address);
   

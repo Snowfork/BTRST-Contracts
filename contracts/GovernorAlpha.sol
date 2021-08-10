@@ -3,7 +3,7 @@ pragma experimental ABIEncoderV2;
 
 contract GovernorAlpha {
     /// @notice The name of this contract
-    string public constant name = "BTRUST Governor Alpha";
+    string public constant name = "BTRST Governor Alpha";
 
     /// @notice The number of votes required in order for a voter to become a proposer
     uint private _proposalThreshold;
@@ -22,11 +22,11 @@ contract GovernorAlpha {
 
     /// @notice The duration of voting on a proposal, in blocks
 
-    /// @notice The address of the BTRUST Protocol Timelock
+    /// @notice The address of the BTRST Protocol Timelock
     TimelockInterface public timelock;
 
-    /// @notice The address of the BTRUST governance token
-    BTRUSTInterface public BTRUST;
+    /// @notice The address of the BTRST governance token
+    BTRSTInterface public BTRST;
 
     /// @notice The address of the Governor Guardian
     address public guardian;
@@ -129,9 +129,9 @@ contract GovernorAlpha {
     /// @notice An event emitted when a proposal has been executed in the Timelock
     event ProposalExecuted(uint id);
 
-    constructor(address timelock_, address BTRUST_, address guardian_, uint quorumVotes_, uint proposalThreshold_, uint32 votingPeriod_) public {
+    constructor(address timelock_, address BTRST_, address guardian_, uint quorumVotes_, uint proposalThreshold_, uint32 votingPeriod_) public {
         timelock = TimelockInterface(timelock_);
-        BTRUST = BTRUSTInterface(BTRUST_);
+        BTRST = BTRSTInterface(BTRST_);
         guardian = guardian_;
         _quorumVotes = quorumVotes_;
         _proposalThreshold = proposalThreshold_;
@@ -145,7 +145,7 @@ contract GovernorAlpha {
     function votingPeriod() public view returns (uint) { return _votingPeriod; }
 
     function propose(address[] memory targets, uint[] memory values, string[] memory signatures, bytes[] memory calldatas, string memory description) public returns (uint) {
-        require(BTRUST.getPriorVotes(msg.sender, sub256(block.number, 1)) > proposalThreshold(), "GovernorAlpha::propose: proposer votes below proposal threshold");
+        require(BTRST.getPriorVotes(msg.sender, sub256(block.number, 1)) > proposalThreshold(), "GovernorAlpha::propose: proposer votes below proposal threshold");
         require(targets.length == values.length && targets.length == signatures.length && targets.length == calldatas.length, "GovernorAlpha::propose: proposal function information arity mismatch");
         require(targets.length != 0, "GovernorAlpha::propose: must provide actions");
         require(targets.length <= proposalMaxOperations(), "GovernorAlpha::propose: too many actions");
@@ -215,7 +215,7 @@ contract GovernorAlpha {
         require(state != ProposalState.Executed, "GovernorAlpha::cancel: cannot cancel executed proposal");
 
         Proposal storage proposal = proposals[proposalId];
-        require(msg.sender == guardian || BTRUST.getPriorVotes(proposal.proposer, sub256(block.number, 1)) < proposalThreshold(), "GovernorAlpha::cancel: proposer above threshold");
+        require(msg.sender == guardian || BTRST.getPriorVotes(proposal.proposer, sub256(block.number, 1)) < proposalThreshold(), "GovernorAlpha::cancel: proposer above threshold");
 
         proposal.canceled = true;
         for (uint i = 0; i < proposal.targets.length; i++) {
@@ -274,7 +274,7 @@ contract GovernorAlpha {
         Proposal storage proposal = proposals[proposalId];
         Receipt storage receipt = proposal.receipts[voter];
         require(receipt.hasVoted == false, "GovernorAlpha::_castVote: voter already voted");
-        uint96 votes = BTRUST.getPriorVotes(voter, proposal.startBlock);
+        uint96 votes = BTRST.getPriorVotes(voter, proposal.startBlock);
 
         if (support) {
             proposal.forVotes = add256(proposal.forVotes, votes);
@@ -337,6 +337,6 @@ interface TimelockInterface {
     function executeTransaction(address target, uint value, string calldata signature, bytes calldata data, uint eta) external payable returns (bytes memory);
 }
 
-interface BTRUSTInterface {
+interface BTRSTInterface {
     function getPriorVotes(address account, uint blockNumber) external view returns (uint96);
 }
