@@ -1,18 +1,18 @@
 pragma solidity ^0.5.16;
 pragma experimental ABIEncoderV2;
 
-contract BTRUST {
+contract BTRST {
     /// @notice EIP-20 token name for this token
-    string public constant name = "BTRUST";
+    string public constant name = "BTRST";
 
     /// @notice EIP-20 token symbol for this token
-    string public constant symbol = "BTRUST";
+    string public constant symbol = "BTRST";
 
     /// @notice EIP-20 token decimals for this token
     uint8 public constant decimals = 18;
 
     /// @notice Total number of tokens in circulation
-    uint public constant totalSupply = 250000000e18; // 250 million BTRUST
+    uint public constant totalSupply = 250000000e18; // 250 million BTRST
 
     /// @notice Allowance amounts on behalf of others
     mapping (address => mapping (address => uint96)) internal allowances;
@@ -57,7 +57,7 @@ contract BTRUST {
     event Approval(address indexed owner, address indexed spender, uint256 amount);
 
     /**
-     * @notice Construct a new BTRUST token
+     * @notice Construct a new BTRST token
      * @param account The initial account to grant all the tokens
      */
     constructor(address account) public {
@@ -88,7 +88,7 @@ contract BTRUST {
         if (rawAmount == uint(-1)) {
             amount = uint96(-1);
         } else {
-            amount = safe96(rawAmount, "BTRUST::approve: amount exceeds 96 bits");
+            amount = safe96(rawAmount, "BTRST::approve: amount exceeds 96 bits");
         }
 
         allowances[msg.sender][spender] = amount;
@@ -113,7 +113,7 @@ contract BTRUST {
      * @return Whether or not the transfer succeeded
      */
     function transfer(address dst, uint rawAmount) external returns (bool) {
-        uint96 amount = safe96(rawAmount, "BTRUST::transfer: amount exceeds 96 bits");
+        uint96 amount = safe96(rawAmount, "BTRST::transfer: amount exceeds 96 bits");
         _transferTokens(msg.sender, dst, amount);
         return true;
     }
@@ -128,10 +128,10 @@ contract BTRUST {
     function transferFrom(address src, address dst, uint rawAmount) external returns (bool) {
         address spender = msg.sender;
         uint96 spenderAllowance = allowances[src][spender];
-        uint96 amount = safe96(rawAmount, "BTRUST::approve: amount exceeds 96 bits");
+        uint96 amount = safe96(rawAmount, "BTRST::approve: amount exceeds 96 bits");
 
         if (spender != src && spenderAllowance != uint96(-1)) {
-            uint96 newAllowance = sub96(spenderAllowance, amount, "BTRUST::transferFrom: transfer amount exceeds spender allowance");
+            uint96 newAllowance = sub96(spenderAllowance, amount, "BTRST::transferFrom: transfer amount exceeds spender allowance");
             allowances[src][spender] = newAllowance;
 
             emit Approval(src, spender, newAllowance);
@@ -163,9 +163,9 @@ contract BTRUST {
         bytes32 structHash = keccak256(abi.encode(DELEGATION_TYPEHASH, delegatee, nonce, expiry));
         bytes32 digest = keccak256(abi.encodePacked("\x19\x01", domainSeparator, structHash));
         address signatory = ecrecover(digest, v, r, s);
-        require(signatory != address(0), "BTRUST::delegateBySig: invalid signature");
-        require(nonce == nonces[signatory]++, "BTRUST::delegateBySig: invalid nonce");
-        require(now <= expiry, "BTRUST::delegateBySig: signature expired");
+        require(signatory != address(0), "BTRST::delegateBySig: invalid signature");
+        require(nonce == nonces[signatory]++, "BTRST::delegateBySig: invalid nonce");
+        require(now <= expiry, "BTRST::delegateBySig: signature expired");
         return _delegate(signatory, delegatee);
     }
 
@@ -187,7 +187,7 @@ contract BTRUST {
      * @return The number of votes the account had as of the given block
      */
     function getPriorVotes(address account, uint blockNumber) public view returns (uint96) {
-        require(blockNumber < block.number, "BTRUST::getPriorVotes: not yet determined");
+        require(blockNumber < block.number, "BTRST::getPriorVotes: not yet determined");
 
         uint32 nCheckpoints = numCheckpoints[account];
         if (nCheckpoints == 0) {
@@ -231,11 +231,11 @@ contract BTRUST {
     }
 
     function _transferTokens(address src, address dst, uint96 amount) internal {
-        require(src != address(0), "BTRUST::_transferTokens: cannot transfer from the zero address");
-        require(dst != address(0), "BTRUST::_transferTokens: cannot transfer to the zero address");
+        require(src != address(0), "BTRST::_transferTokens: cannot transfer from the zero address");
+        require(dst != address(0), "BTRST::_transferTokens: cannot transfer to the zero address");
 
-        balances[src] = sub96(balances[src], amount, "BTRUST::_transferTokens: transfer amount exceeds balance");
-        balances[dst] = add96(balances[dst], amount, "BTRUST::_transferTokens: transfer amount overflows");
+        balances[src] = sub96(balances[src], amount, "BTRST::_transferTokens: transfer amount exceeds balance");
+        balances[dst] = add96(balances[dst], amount, "BTRST::_transferTokens: transfer amount overflows");
         emit Transfer(src, dst, amount);
 
         _moveDelegates(delegates[src], delegates[dst], amount);
@@ -246,21 +246,21 @@ contract BTRUST {
             if (srcRep != address(0)) {
                 uint32 srcRepNum = numCheckpoints[srcRep];
                 uint96 srcRepOld = srcRepNum > 0 ? checkpoints[srcRep][srcRepNum - 1].votes : 0;
-                uint96 srcRepNew = sub96(srcRepOld, amount, "BTRUST::_moveVotes: vote amount underflows");
+                uint96 srcRepNew = sub96(srcRepOld, amount, "BTRST::_moveVotes: vote amount underflows");
                 _writeCheckpoint(srcRep, srcRepNum, srcRepOld, srcRepNew);
             }
 
             if (dstRep != address(0)) {
                 uint32 dstRepNum = numCheckpoints[dstRep];
                 uint96 dstRepOld = dstRepNum > 0 ? checkpoints[dstRep][dstRepNum - 1].votes : 0;
-                uint96 dstRepNew = add96(dstRepOld, amount, "BTRUST::_moveVotes: vote amount overflows");
+                uint96 dstRepNew = add96(dstRepOld, amount, "BTRST::_moveVotes: vote amount overflows");
                 _writeCheckpoint(dstRep, dstRepNum, dstRepOld, dstRepNew);
             }
         }
     }
 
     function _writeCheckpoint(address delegatee, uint32 nCheckpoints, uint96 oldVotes, uint96 newVotes) internal {
-        uint32 blockNumber = safe32(block.number, "BTRUST::_writeCheckpoint: block number exceeds 32 bits");
+        uint32 blockNumber = safe32(block.number, "BTRST::_writeCheckpoint: block number exceeds 32 bits");
 
         if (nCheckpoints > 0 && checkpoints[delegatee][nCheckpoints - 1].fromBlock == blockNumber) {
             checkpoints[delegatee][nCheckpoints - 1].votes = newVotes;
