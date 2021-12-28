@@ -10,7 +10,10 @@ HARDHAT_NETWORK=ropsten PRIVATE_KEY=your-key node ./scripts/createNewProposal.js
 
 When modifying the proposal, note that the description field is in Markdown, with the first line/heading being used as the title of the proposal and the remainder being used as the description, for example:``` #Add Foundation Member\nSample description ```
 
-**NOTE:** Make sure you have configured your setup for deployment as described in the installation steps. Also make sure the private key for used has enough test Ethereum to make the transaction
+**NOTE:**
+ - Make sure you have configured your setup for deployment as described in the installation steps.
+ - Also make sure the private key for used has enough test Ethereum to make the transaction
+ - Most importantly, make sure the address used has enough BTRST tokens above the proposal threshold AND has self-delegated votes above the threshold
 
 ## Cancelling an existing proposal
 ```bash
