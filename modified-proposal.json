@@ -1,21 +1,10 @@
 {
-
-    "targets": [
-        "0xa1cb5A8218DA61492f202f3E9309cED72b4e1D60"
-    ],
-    "values": [
-        "0"
-    ],
-    "signatures": [
-        "addMarketplaceCategory(string)"
-    ],
-    "parameters": {
-        "types": [
-            "string"
-        ],
-        "values": [
-            "Beta-Test-Category"
-        ]
-    },
-    "description": "# Central notifications preference center\n Create a central notifications preference center on the Braintrust platform based on the details in this doc: https://docs.google.com/document/d/1-L6BTLVHcncq_VZ4VJ_akGlvq9fJ3eVtyzucGpeVxOo/edit \n Note: Please be aware this proposal is not for an item in the blockchain. We just want to proceed with on-chain voting in the Beta to ensure the process is clear for everyone, and so are creating a dummy proposal to the marketplace category contract as part of this test, even though it is unrelated to the actual proposal being made"
+  "targets": ["0x1665bFEA590dB00380f0Fc8D51A7A5407D90707C"],
+  "values": ["0"],
+  "signatures": ["transfer(address,uint256)"],
+  "parameters": {
+    "types": ["address", "uint256"],
+    "values": ["0x9A7C6d6f6317C17c6aFb4F5D18B3e2F8E02F655F", "20"]
+  },
+  "description": "#Transfer Tokens\nSample description"
 }

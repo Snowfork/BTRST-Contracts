@@ -4,13 +4,14 @@
 
 This is the git repository for the BTRST token. It contains a openzeppelin-based ERC20 token and truffle deployment and configuration for testing and deployment to various networks.
 
-FAKE_BTRST deployed to: **0x85C8B63cbA0e513b3eF9f19AAFd4517a24630950**
+Deploying BTRST with: { deployer: 0x9A7C6d6f6317C17c6aFb4F5D18B3e2F8E02F655F, foundationInitialAddress: 0x9A7C6d6f6317C17c6aFb4F5D18B3e2F8E02F655F }}
+Fake BTRST deployed to: **0x8B32c3D92dF144A2b6B242E51573b1EF55C7ccBD**
 
-Timelock deployed to: **0x5F99b68C14B4ebc7602A3afE80C0Ce30B9a57680**
+Timelock deployed to: **0x46b7a85029F28D2f1561c4D83782ef6B4f6d7278**
 
-GovernorAlpha deployed to: **0x7a43Eb629e9C6eB08B4f3976f69617F731Dc2CE9**
+GovernorAlpha deployed to: **0xCD2794981bAC5180f326F96EFBBc664af1617C88**
 
-GovernanceDecisions deployed to: **0xa44642D9DBBB9a4fce83fD59a2e3e18Bb6a74067**
+GovernanceDecisions deployed to: **0x5b465d0Ee22508eD5a70FB0873c2cC1dD4d664aa**
 
 ## Disclaimer
 
@@ -57,3 +58,9 @@ There are some scripts to help with interacting with existing deployments of the
 ## Development and deployment
 
 See [here](./docs/development-and-deployment.md) for further guidance on developing the contracts yourself locally or deploying new instances of them to an Ethereum network
+
+## Ref
+
+- https://docs.openzeppelin.com/contracts/4.x/governance
+- https://github.com/compound-finance/compound-protocol/tree/master/contracts/Governance
+- https://compound.finance/docs/governance
