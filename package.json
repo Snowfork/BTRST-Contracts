@@ -6,7 +6,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "truffle test"
+    "test": "truffle test",
+    "deploy:local": "concurrently \"npx hardhat node\" \"npx hardhat run deploy/01_deploy.js --network hardhat\"",
+    "deploy:testnet": "npx hardhat run scripts/deploy.js --network ropsten"
   },
   "author": "",
   "license": "ISC",
@@ -29,6 +31,7 @@
     "hardhat-truffle5": "^1.0.1",
     "hardhat-web3": "^1.0.1",
     "solparse": "^2.2.8",
-    "web3": "^1.3.4"
+    "web3": "^1.3.4",
+    "concurrently": "^6.2.0"
   }
 }

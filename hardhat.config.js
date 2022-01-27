@@ -4,20 +4,23 @@ require("@nomiclabs/hardhat-truffle5");
 require("hardhat-deploy");
 require("@nomiclabs/hardhat-ethers");
 
-const secrets = require('./secrets');
+const secrets = require("./secrets");
 
 module.exports = {
   solidity: {
     compilers: [
       {
-        version: "0.5.16"
+        version: "0.5.16",
       },
       {
         version: "0.6.7",
-      }
-    ]
+      },
+    ],
   },
   networks: {
+    hardhat: {
+      chainId: 1337,
+    },
     ropsten: {
       url: `https://ropsten.infura.io/v3/${secrets.infuraProjectID}`,
       gas: 5500000,
@@ -25,7 +28,7 @@ module.exports = {
       from: secrets.deployerAccount,
       live: true,
       gasPrice: 10000000000,
-      tags: ["staging"]
+      tags: ["staging"],
     },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${secrets.infuraProjectID}`,
@@ -34,8 +37,8 @@ module.exports = {
       from: secrets.deployerAccount,
       live: true,
       gasPrice: "auto",
-      tags: ["production"]
-    }
+      tags: ["production"],
+    },
   },
   namedAccounts: {
     deployer: {
@@ -43,9 +46,9 @@ module.exports = {
     },
     foundationInitialAddress: {
       default: 0,
-    }
+    },
   },
   etherscan: {
-    apiKey: ""
-  }
+    apiKey: secrets.etherScanApiKey,
+  },
 };
