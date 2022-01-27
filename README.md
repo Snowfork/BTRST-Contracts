@@ -4,7 +4,13 @@
 
 This is the git repository for the BTRST token. It contains a openzeppelin-based ERC20 token and truffle deployment and configuration for testing and deployment to various networks.
 
-The token is currently deployed on Ropsten at: **0x709AE94F23F3a4B613eB897055b606d887299De4**
+FAKE_BTRST deployed to: **0x85C8B63cbA0e513b3eF9f19AAFd4517a24630950**
+
+Timelock deployed to: **0x5F99b68C14B4ebc7602A3afE80C0Ce30B9a57680**
+
+GovernorAlpha deployed to: **0x7a43Eb629e9C6eB08B4f3976f69617F731Dc2CE9**
+
+GovernanceDecisions deployed to: **0xa44642D9DBBB9a4fce83fD59a2e3e18Bb6a74067**
 
 ## Disclaimer
 
@@ -23,6 +29,7 @@ Node, NPM, Hardhat
 ## Installation
 
 ### Setup
+
 Clone the repo, then:
 
 ```bash
@@ -38,12 +45,15 @@ cp './secrets-example.js' './secrets.js'
 ```
 
 Modify it as follows:
- - infuraProjectID: This needs to be a project id for [Infura](https://infura.io/). You can get one by creating your own Infura account and project.
- - deployerPrivateKey: This needs to be the private key of the account you want to deploy from or create proposals from. It must have sufficient gas to pay for transactions,
- - deployerAccount: This needs to be the address of the same account as above
+
+- infuraProjectID: This needs to be a project id for [Infura](https://infura.io/). You can get one by creating your own Infura account and project.
+- deployerPrivateKey: This needs to be the private key of the account you want to deploy from or create proposals from. It must have sufficient gas to pay for transactions,
+- deployerAccount: This needs to be the address of the same account as above
 
 ## Usage
+
 There are some scripts to help with interacting with existing deployments of the contracts, for example creating and cancelling proposals [here](./docs/proposal-creation.md)
 
 ## Development and deployment
+
 See [here](./docs/development-and-deployment.md) for further guidance on developing the contracts yourself locally or deploying new instances of them to an Ethereum network

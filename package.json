@@ -7,8 +7,8 @@
   },
   "scripts": {
     "test": "truffle test",
-    "deploy:local": "concurrently \"npx hardhat node\" \"npx hardhat run deploy/01_deploy.js --network hardhat\"",
-    "deploy:testnet": "npx hardhat run scripts/deploy.js --network ropsten"
+    "deploy:local": "concurrently \"npx hardhat node\" \"npx hardhat deploy --network hardhat --reset\"",
+    "deploy:testnet": "npx hardhat deploy --network ropsten --reset"
   },
   "author": "",
   "license": "ISC",
