@@ -64,3 +64,4 @@ See [here](./docs/development-and-deployment.md) for further guidance on develop
 - https://docs.openzeppelin.com/contracts/4.x/governance
 - https://github.com/compound-finance/compound-protocol/tree/master/contracts/Governance
 - https://compound.finance/docs/governance
+- https://docs.google.com/document/d/1Jn_-sgSac73nVHmOFZ16FjTjQH8pZAlO/edit#heading=h.97tbi9kujppy
