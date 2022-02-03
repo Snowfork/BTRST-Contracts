@@ -4,16 +4,17 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract GovernanceDecisions is AccessControl {
-
     bytes32 public constant GOVERNOR_ROLE = keccak256("GOVERNOR_ROLE");
 
     uint8 public marketplaceFee;
     string[] private marketplaceCategories;
     string[] private foundationMemberships;
+    string[] private testers;
 
     event MarketplaceFeeChanged(uint8 oldFee, uint8 newFee);
     event MarketplaceCategoryAdded(string category);
     event FoundationMemberAdded(string member);
+    event TesterAdded();
 
     constructor(address governor_) public {
         _setupRole(GOVERNOR_ROLE, governor_);
@@ -21,8 +22,14 @@ contract GovernanceDecisions is AccessControl {
     }
 
     function setMarketplaceFee(uint8 fee) external {
-        require(hasRole(GOVERNOR_ROLE, msg.sender), "GovernanceDecisions::setMarketplaceFee ACCESS FORBIDDEN");
-        require(fee < 100, "GovernanceDecisions::setMarketplaceFee fee must be less than 100");
+        require(
+            hasRole(GOVERNOR_ROLE, msg.sender),
+            "GovernanceDecisions::setMarketplaceFee ACCESS FORBIDDEN"
+        );
+        require(
+            fee < 100,
+            "GovernanceDecisions::setMarketplaceFee fee must be less than 100"
+        );
 
         uint8 oldFee;
         oldFee = marketplaceFee;
@@ -31,7 +38,10 @@ contract GovernanceDecisions is AccessControl {
     }
 
     function addMarketplaceCategory(string calldata category) external {
-        require(hasRole(GOVERNOR_ROLE, msg.sender), "GovernanceDecisions::addMarketplaceCategory ACCESS FORBIDDEN");
+        require(
+            hasRole(GOVERNOR_ROLE, msg.sender),
+            "GovernanceDecisions::addMarketplaceCategory ACCESS FORBIDDEN"
+        );
 
         marketplaceCategories.push(category);
         emit MarketplaceCategoryAdded(category);
@@ -42,10 +52,23 @@ contract GovernanceDecisions is AccessControl {
     }
 
     function addFoundationMember(string calldata member) external {
-        require(hasRole(GOVERNOR_ROLE, msg.sender), "GovernanceDecisions::addFoundationMember ACCESS FORBIDDEN");
+        require(
+            hasRole(GOVERNOR_ROLE, msg.sender),
+            "GovernanceDecisions::addFoundationMember ACCESS FORBIDDEN"
+        );
 
         foundationMemberships.push(member);
         emit FoundationMemberAdded(member);
+    }
+
+    function addTester(string calldata tester) external {
+        require(
+            hasRole(GOVERNOR_ROLE, msg.sender),
+            "GovernanceDecisions::addTester ACCESS FORBIDDEN"
+        );
+
+        testers.push(tester);
+        emit TesterAdded();
     }
 
     function getMemberships() public view returns (string[] memory) {

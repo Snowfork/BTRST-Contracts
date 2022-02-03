@@ -1,0 +1,10 @@
+{
+  "targets": ["0xa1cb5A8218DA61492f202f3E9309cED72b4e1D60"],
+  "values": ["0"],
+  "signatures": ["addTester(string)"],
+  "parameters": {
+    "types": ["string"],
+    "values": ["Min Ju"]
+  },
+  "description": "#Add Tester\nSample description"
+}

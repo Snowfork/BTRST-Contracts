@@ -5,13 +5,11 @@
 This is the git repository for the BTRST token. It contains a openzeppelin-based ERC20 token and truffle deployment and configuration for testing and deployment to various networks.
 
 Deploying BTRST with: { deployer: 0x9A7C6d6f6317C17c6aFb4F5D18B3e2F8E02F655F, foundationInitialAddress: 0x9A7C6d6f6317C17c6aFb4F5D18B3e2F8E02F655F }}
-Fake BTRST deployed to: **0x8B32c3D92dF144A2b6B242E51573b1EF55C7ccBD**
 
-Timelock deployed to: **0x46b7a85029F28D2f1561c4D83782ef6B4f6d7278**
-
-GovernorAlpha deployed to: **0xCD2794981bAC5180f326F96EFBBc664af1617C88**
-
-GovernanceDecisions deployed to: **0x5b465d0Ee22508eD5a70FB0873c2cC1dD4d664aa**
+Fake BTRST deployed to: **0xe5e9e274bA811fAE56Ba3054119b509b8fFaFB97**
+Timelock deployed to: **0xa5cBd179CedF7433E1f57ac400dEE20119ddc719**
+GovernorAlpha deployed to: **0x1BF4452518c3e85E02D515C39EAa40858547C80C**
+GovernanceDecisions deployed to: **0xfa8d59923b9FF932948d4441077FfEb900baD204**
 
 ## Disclaimer
 

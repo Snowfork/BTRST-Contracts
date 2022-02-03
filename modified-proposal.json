@@ -1,10 +1,10 @@
 {
   "targets": ["0x1665bFEA590dB00380f0Fc8D51A7A5407D90707C"],
   "values": ["0"],
-  "signatures": ["transfer(address,uint256)"],
+  "signatures": ["addTester(string)"],
   "parameters": {
-    "types": ["address", "uint256"],
-    "values": ["0x9A7C6d6f6317C17c6aFb4F5D18B3e2F8E02F655F", "20"]
+    "types": ["string"],
+    "values": ["Min Ju"]
   },
-  "description": "#Transfer Tokens\nSample description"
+  "description": "#Add Tester\nミンさんをテスターについかしてください"
 }

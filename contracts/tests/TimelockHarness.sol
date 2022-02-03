@@ -1,15 +1,16 @@
-pragma solidity ^0.5.16;
+pragma solidity ^0.6.7;
 
 import "../Timelock.sol";
 
 interface Administered {
-    function _acceptAdmin() external returns (uint);
+    function _acceptAdmin() external returns (uint256);
 }
 
 contract TimelockHarness is Timelock {
-    constructor(address admin_, uint delay_)
-        Timelock(admin_, delay_) public {
-    }
+    constructor(address admin_, uint256 delay_)
+        public
+        Timelock(admin_, delay_)
+    {}
 
     function harnessSetPendingAdmin(address pendingAdmin_) public {
         pendingAdmin = pendingAdmin_;
@@ -21,7 +22,10 @@ contract TimelockHarness is Timelock {
 }
 
 contract TimelockTest is Timelock {
-    constructor(address admin_, uint delay_) Timelock(admin_, 2 days) public {
+    constructor(address admin_, uint256 delay_)
+        public
+        Timelock(admin_, 2 days)
+    {
         delay = delay_;
     }
 
