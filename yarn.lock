@@ -647,10 +647,10 @@
     ethers "^4.0.0-beta.1"
     source-map-support "^0.5.19"
 
-"@openzeppelin/contracts@^3.4.1":
-  version "3.4.2"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-3.4.2.tgz#d81f786fda2871d1eb8a8c5a73e455753ba53527"
-  integrity sha512-z0zMCjyhhp4y7XKAcDAi3Vgms4T2PstwBdahiO0+9NaGICQKjynK3wduSRplTgk4LXmoO1yfDGO5RbjKYxtuxA==
+"@openzeppelin/contracts@^4.2.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.5.0.tgz#3fd75d57de172b3743cdfc1206883f56430409cc"
+  integrity sha512-fdkzKPYMjrRiPK6K4y64e6GzULR7R7RwxSigHS8DDp7aWDeoReqsQI+cxHV1UuhAqX69L1lAaWDxenfP+xiqzA==
 
 "@sentry/core@5.30.0":
   version "5.30.0"
@@ -2523,7 +2523,7 @@ ethereum-cryptography@^0.1.2, ethereum-cryptography@^0.1.3:
     secp256k1 "^4.0.1"
     setimmediate "^1.0.5"
 
-ethereum-ens@^0.8.0:
+ethereum-ens@^0.8.11:
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/ethereum-ens/-/ethereum-ens-0.8.0.tgz#6d0f79acaa61fdbc87d2821779c4e550243d4c57"
   integrity sha512-a8cBTF4AWw1Q1Y37V1LSCS9pRY4Mh3f8vCg5cbXCCEJ3eno1hbI/+Ccv9SZLISYpqQhaglP3Bxb/34lS4Qf7Bg==
@@ -3776,7 +3776,7 @@ js-sha3@0.5.7, js-sha3@^0.5.7:
   resolved "https://registry.yarnpkg.com/js-sha3/-/js-sha3-0.5.7.tgz#0d4ffd8002d5333aabaf4a23eed2f6374c9f28e7"
   integrity sha1-DU/9gALVMzqrr0oj7tL2N0yfKOc=
 
-js-sha3@0.8.0, js-sha3@^0.8.0:
+js-sha3@0.8.0, js-sha3@^0.8.11:
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/js-sha3/-/js-sha3-0.8.0.tgz#b9b7a5da73afad7dedd0f8c463954cbde6818840"
   integrity sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==

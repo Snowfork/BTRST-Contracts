@@ -1,5 +1,5 @@
-pragma solidity ^0.6.7;
-pragma experimental ABIEncoderV2;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.11;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
@@ -16,7 +16,7 @@ contract GovernanceDecisions is AccessControl {
     event FoundationMemberAdded(string member);
     event TesterAdded();
 
-    constructor(address governor_) public {
+    constructor(address governor_) {
         _setupRole(GOVERNOR_ROLE, governor_);
         marketplaceFee = 10; // set default marketplace fee
     }
@@ -67,6 +67,7 @@ contract GovernanceDecisions is AccessControl {
             "GovernanceDecisions::addTester ACCESS FORBIDDEN"
         );
 
+        // add anything we want here
         testers.push(tester);
         emit TesterAdded();
     }

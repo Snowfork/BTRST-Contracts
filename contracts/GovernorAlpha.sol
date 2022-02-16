@@ -1,5 +1,5 @@
-pragma solidity ^0.6.7;
-pragma experimental ABIEncoderV2;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.11;
 
 contract GovernorAlpha {
     /// @notice The name of this contract
@@ -37,6 +37,9 @@ contract GovernorAlpha {
 
     /// @notice The total number of proposals
     uint256 public proposalCount;
+
+    /// @notice create proposal requests
+    mapping(uint256 => Proposal) proposalRequests;
 
     struct Proposal {
         /// @notice Unique id for looking up a proposal
@@ -144,7 +147,7 @@ contract GovernorAlpha {
         uint256 quorumVotes_,
         uint256 proposalThreshold_,
         uint32 votingPeriod_
-    ) public {
+    ) {
         timelock = TimelockInterface(timelock_);
         BTRST = BTRSTInterface(BTRST_);
         guardian = guardian_;
@@ -210,24 +213,21 @@ contract GovernorAlpha {
         uint256 startBlock = add256(block.number, votingDelay());
         uint256 endBlock = add256(startBlock, votingPeriod());
 
-        proposalCount++;
-        Proposal memory newProposal = Proposal({
-            id: proposalCount,
-            proposer: msg.sender,
-            eta: 0,
-            targets: targets,
-            values: values,
-            signatures: signatures,
-            calldatas: calldatas,
-            startBlock: startBlock,
-            endBlock: endBlock,
-            forVotes: 0,
-            againstVotes: 0,
-            canceled: false,
-            executed: false
-        });
+        Proposal storage newProposal = proposals[proposalCount++];
+        newProposal.id = proposalCount;
+        newProposal.proposer = msg.sender;
+        newProposal.eta = 0;
+        newProposal.targets = targets;
+        newProposal.values = values;
+        newProposal.signatures = signatures;
+        newProposal.calldatas = calldatas;
+        newProposal.startBlock = startBlock;
+        newProposal.endBlock = endBlock;
+        newProposal.forVotes = 0;
+        newProposal.againstVotes = 0;
+        newProposal.canceled = false;
+        newProposal.executed = false;
 
-        proposals[newProposal.id] = newProposal;
         latestProposalIds[newProposal.proposer] = newProposal.id;
 
         emit ProposalCreated(
@@ -300,9 +300,9 @@ contract GovernorAlpha {
     }
 
     function cancel(uint256 proposalId) public {
-        ProposalState state = state(proposalId);
+        ProposalState _state = state(proposalId);
         require(
-            state != ProposalState.Executed,
+            _state != ProposalState.Executed,
             "GovernorAlpha::cancel: cannot cancel executed proposal"
         );
 
@@ -507,12 +507,8 @@ contract GovernorAlpha {
         return a - b;
     }
 
-    function getChainId() internal pure returns (uint256) {
-        uint256 chainId;
-        assembly {
-            chainId := chainid()
-        }
-        return chainId;
+    function getChainId() internal view returns (uint256) {
+        return block.chainid;
     }
 }
 

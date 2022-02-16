@@ -8,13 +8,14 @@
   "scripts": {
     "test": "truffle test",
     "deploy:local": "concurrently \"npx hardhat node\" \"npx hardhat deploy --network hardhat --reset\"",
-    "deploy:testnet": "npx hardhat deploy --network ropsten --reset"
+    "deploy:testnet": "npx hardhat deploy --network ropsten --reset",
+    "proposal:create": "HARDHAT_NETWORK=ropsten PRIVATE_KEY=bfa655126938af76192473971d418b82c00f080401ac7d6a8f3cce0323f93be7 node ./scripts/createNewProposal.js ../modified-proposal.json"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@ethereumjs/vm": "^5.5.2",
-    "@openzeppelin/contracts": "^3.4.1",
+    "@openzeppelin/contracts": "^4.2.0",
     "@truffle/hdwallet-provider": "^1.2.2"
   },
   "devDependencies": {

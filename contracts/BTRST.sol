@@ -1,18 +1,31 @@
-pragma solidity ^0.6.7;
-pragma experimental ABIEncoderV2;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.11;
 
-contract BTRST {
-    /// @notice EIP-20 token name for this token
-    string public constant name = "FAKE_BTRST";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-    /// @notice EIP-20 token symbol for this token
-    string public constant symbol = "F_BTRST";
+import "./module/GasPriceController.sol";
+import "./module/DexListing.sol";
+import "./module/TransferFee.sol";
 
-    /// @notice EIP-20 token decimals for this token
-    uint8 public constant decimals = 18;
+contract BTRST is
+    ERC20,
+    GasPriceController,
+    DexListing,
+    TransferFee,
+    Pausable,
+    AccessControl
+{
+    bytes32 private constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    bytes32 private constant BURNER_ROLE = keccak256("BURNER_ROLE");
+    bytes32 private constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
-    /// @notice Total number of tokens in circulation
-    uint256 public constant totalSupply = 250000000e18; // 250 million BTRST
+    string constant TOKEN_NAME = "FAKE_BTRST";
+    string constant TOKEN_SYMBOL = "F_BTRST";
+
+    mapping(address => bool) private blackList;
+    uint256 private initialTokensSupply = 2500000000 * 10**decimals(); // 2.5B
 
     /// @notice Allowance amounts on behalf of others
     mapping(address => mapping(address => uint96)) internal allowances;
@@ -62,123 +75,20 @@ contract BTRST {
         uint256 newBalance
     );
 
-    /// @notice The standard EIP-20 transfer event
-    event Transfer(address indexed from, address indexed to, uint256 amount);
-
-    /// @notice The standard EIP-20 approval event
-    event Approval(
-        address indexed owner,
-        address indexed spender,
-        uint256 amount
-    );
-
     /**
      * @notice Construct a new BTRST token
      * @param account The initial account to grant all the tokens
      */
-    constructor(address account) public {
-        balances[account] = uint96(totalSupply);
-        emit Transfer(address(0), account, totalSupply);
-    }
-
-    /**
-     * @notice Get the number of tokens `spender` is approved to spend on behalf of `account`
-     * @param account The address of the account holding the funds
-     * @param spender The address of the account spending the funds
-     * @return The number of tokens approved
-     */
-    function allowance(address account, address spender)
-        external
-        view
-        returns (uint256)
+    constructor(address account)
+        ERC20(TOKEN_NAME, TOKEN_SYMBOL)
+        DexListing(100)
     {
-        return allowances[account][spender];
-    }
-
-    /**
-     * @notice Approve `spender` to transfer up to `amount` from `src`
-     * @dev This will overwrite the approval amount for `spender`
-     *  and is subject to issues noted [here](https://eips.ethereum.org/EIPS/eip-20#approve)
-     * @param spender The address of the account which may transfer tokens
-     * @param rawAmount The number of tokens that are approved (2^256-1 means infinite)
-     * @return Whether or not the approval succeeded
-     */
-    function approve(address spender, uint256 rawAmount)
-        external
-        returns (bool)
-    {
-        uint96 amount;
-        if (rawAmount == uint256(-1)) {
-            amount = uint96(-1);
-        } else {
-            amount = safe96(
-                rawAmount,
-                "FAKE_BTRST::approve: amount exceeds 96 bits"
-            );
-        }
-
-        allowances[msg.sender][spender] = amount;
-
-        emit Approval(msg.sender, spender, amount);
-        return true;
-    }
-
-    /**
-     * @notice Get the number of tokens held by the `account`
-     * @param account The address of the account to get the balance of
-     * @return The number of tokens held
-     */
-    function balanceOf(address account) external view returns (uint256) {
-        return balances[account];
-    }
-
-    /**
-     * @notice Transfer `amount` tokens from `msg.sender` to `dst`
-     * @param dst The address of the destination account
-     * @param rawAmount The number of tokens to transfer
-     * @return Whether or not the transfer succeeded
-     */
-    function transfer(address dst, uint256 rawAmount) external returns (bool) {
-        uint96 amount = safe96(
-            rawAmount,
-            "FAKE_BTRST::transfer: amount exceeds 96 bits"
-        );
-        _transferTokens(msg.sender, dst, amount);
-        return true;
-    }
-
-    /**
-     * @notice Transfer `amount` tokens from `src` to `dst`
-     * @param src The address of the source account
-     * @param dst The address of the destination account
-     * @param rawAmount The number of tokens to transfer
-     * @return Whether or not the transfer succeeded
-     */
-    function transferFrom(
-        address src,
-        address dst,
-        uint256 rawAmount
-    ) external returns (bool) {
-        address spender = msg.sender;
-        uint96 spenderAllowance = allowances[src][spender];
-        uint96 amount = safe96(
-            rawAmount,
-            "FAKE_BTRST::approve: amount exceeds 96 bits"
-        );
-
-        if (spender != src && spenderAllowance != uint96(-1)) {
-            uint96 newAllowance = sub96(
-                spenderAllowance,
-                amount,
-                "FAKE_BTRST::transferFrom: transfer amount exceeds spender allowance"
-            );
-            allowances[src][spender] = newAllowance;
-
-            emit Approval(src, spender, newAllowance);
-        }
-
-        _transferTokens(src, dst, amount);
-        return true;
+        _setupRole(DEFAULT_ADMIN_ROLE, account);
+        _setupRole(ADMIN_ROLE, account);
+        _setupRole(BURNER_ROLE, account);
+        _setupRole(PAUSER_ROLE, account);
+        _mint(account, initialTokensSupply);
+        _setTransferFee(account, 0, 0, 0);
     }
 
     /**
@@ -209,7 +119,7 @@ contract BTRST {
         bytes32 domainSeparator = keccak256(
             abi.encode(
                 DOMAIN_TYPEHASH,
-                keccak256(bytes(name)),
+                keccak256(bytes(TOKEN_NAME)),
                 getChainId(),
                 address(this)
             )
@@ -229,7 +139,10 @@ contract BTRST {
             nonce == nonces[signatory]++,
             "FAKE_BTRST::delegateBySig: invalid nonce"
         );
-        require(now <= expiry, "FAKE_BTRST::delegateBySig: signature expired");
+        require(
+            block.timestamp <= expiry,
+            "FAKE_BTRST::delegateBySig: signature expired"
+        );
         return _delegate(signatory, delegatee);
     }
 
@@ -392,6 +305,187 @@ contract BTRST {
         emit DelegateVotesChanged(delegatee, oldVotes, newVotes);
     }
 
+    /*
+       Override
+   */
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal override whenNotPaused {
+        require(!blackList[from] && !blackList[to], "Address is blacklisted");
+        super._beforeTokenTransfer(from, to, amount);
+    }
+
+    function _transfer(
+        address sender_,
+        address recipient_,
+        uint256 amount_
+    ) internal override onlyValidGasPrice {
+        if (!_listingFinished) {
+            uint256 fee = _updateAndGetListingFee(sender_, recipient_, amount_);
+            require(fee <= amount_, "Token: listing fee too high");
+            uint256 transferA = amount_ - fee;
+            if (fee > 0) {
+                super._transfer(sender_, _getTransferFeeTo(), fee);
+            }
+            super._transfer(sender_, recipient_, transferA);
+        } else {
+            uint256 transferFee = _getTransferFee(sender_, recipient_, amount_);
+            require(transferFee <= amount_, "Token: transferFee too high");
+            uint256 transferA = amount_ - transferFee;
+            if (transferFee > 0) {
+                super._transfer(sender_, _getTransferFeeTo(), transferFee);
+            }
+            if (transferA > 0) {
+                super._transfer(sender_, recipient_, transferA);
+            }
+        }
+    }
+
+    /*
+        Settings
+    */
+
+    function setMaxGasPrice(uint256 maxGasPrice_)
+        external
+        onlyRole(ADMIN_ROLE)
+    {
+        _setMaxGasPrice(maxGasPrice_);
+    }
+
+    function setTransferFee(
+        address to_,
+        uint256 buyFee_,
+        uint256 sellFee_,
+        uint256 normalFee_
+    ) external onlyRole(ADMIN_ROLE) {
+        _setTransferFee(to_, buyFee_, sellFee_, normalFee_);
+    }
+
+    function addBlackList(address _address) external onlyRole(ADMIN_ROLE) {
+        blackList[_address] = true;
+    }
+
+    function addBlackLists(address[] calldata _address)
+        external
+        onlyRole(ADMIN_ROLE)
+    {
+        uint256 count = _address.length;
+        for (uint256 i = 0; i < count; i++) {
+            blackList[_address[i]] = true;
+        }
+    }
+
+    function removeBlackList(address _address) external onlyRole(ADMIN_ROLE) {
+        blackList[_address] = false;
+    }
+
+    function removeBlackLists(address[] calldata _address)
+        external
+        onlyRole(ADMIN_ROLE)
+    {
+        uint256 count = _address.length;
+        for (uint256 i = 0; i < count; i++) {
+            blackList[_address[i]] = false;
+        }
+    }
+
+    /**
+     * @dev Pauses all token transfers.
+     *
+     * See {ERC20Pausable} and {Pausable-_pause}.
+     *
+     * Requirements:
+     *
+     * - the caller must have the `PAUSER_ROLE`.
+     */
+    function pause() public onlyRole(PAUSER_ROLE) {
+        _pause();
+    }
+
+    /**
+     * @dev Unpauses all token transfers.
+     *
+     * See {ERC20Pausable} and {Pausable-_unpause}.
+     *
+     * Requirements:
+     *
+     * - the caller must have the `PAUSER_ROLE`.
+     */
+    function unpause() public onlyRole(PAUSER_ROLE) {
+        _unpause();
+    }
+
+    /**
+     * @dev Destroys `amount` tokens from the caller.
+     *
+     * See {ERC20-_burn}.
+     */
+    function burn(uint256 amount) public virtual onlyRole(BURNER_ROLE) {
+        _burn(_msgSender(), amount);
+    }
+
+    /**
+     * @dev Destroys `amount` tokens from `account`, deducting from the caller's
+     * allowance.
+     *
+     * See {ERC20-_burn} and {ERC20-allowance}.
+     *
+     * Requirements:
+     *
+     * - the caller must have allowance for ``accounts``'s tokens of at least
+     * `amount`.
+     */
+    function burnFrom(address account, uint256 amount)
+        public
+        virtual
+        onlyRole(BURNER_ROLE)
+    {
+        uint256 currentAllowance = allowance(account, _msgSender());
+        require(
+            currentAllowance >= amount,
+            "ERC20: burn amount exceeds allowance"
+        );
+        unchecked {
+            _approve(account, _msgSender(), currentAllowance - amount);
+        }
+        _burn(account, amount);
+    }
+
+    /*
+         Withdraw
+     */
+
+    function withdrawBalance() public onlyRole(ADMIN_ROLE) {
+        address payable _owner = payable(_msgSender());
+        _owner.transfer(address(this).balance);
+    }
+
+    function withdrawTokens(address _tokenAddr, address _to)
+        public
+        onlyRole(ADMIN_ROLE)
+    {
+        require(
+            _tokenAddr != address(this),
+            "Cannot transfer out tokens from contract!"
+        );
+        require(isContract(_tokenAddr), "Need a contract address");
+        ERC20(_tokenAddr).transfer(
+            _to,
+            ERC20(_tokenAddr).balanceOf(address(this))
+        );
+    }
+
+    function isContract(address account) internal view returns (bool) {
+        uint256 size;
+        assembly {
+            size := extcodesize(account)
+        }
+        return size > 0;
+    }
+
     function safe32(uint256 n, string memory errorMessage)
         internal
         pure
@@ -429,11 +523,7 @@ contract BTRST {
         return a - b;
     }
 
-    function getChainId() internal pure returns (uint256) {
-        uint256 chainId;
-        assembly {
-            chainId := chainid()
-        }
-        return chainId;
+    function getChainId() internal view returns (uint256) {
+        return block.chainid;
     }
 }

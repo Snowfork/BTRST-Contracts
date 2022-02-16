@@ -1,6 +1,7 @@
-pragma solidity ^0.6.7;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.11;
 
-import "./SafeMath.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract Timelock {
     using SafeMath for uint256;
@@ -43,7 +44,7 @@ contract Timelock {
 
     mapping(bytes32 => bool) public queuedTransactions;
 
-    constructor(address admin_, uint256 delay_) public {
+    constructor(address admin_, uint256 delay_) {
         require(
             delay_ >= MINIMUM_DELAY,
             "Timelock::constructor: Delay must exceed minimum delay."
