@@ -27,6 +27,15 @@ module.exports = {
       gasPrice: 10000000000,
       tags: ["staging"]
     },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${secrets.infuraProjectID}`,
+      gas: 5500000,
+      accounts: [`0x${secrets.deployerPrivateKey}`],
+      from: secrets.deployerAccount,
+      live: true,
+      gasPrice: "auto",
+      tags: ["staging"]
+    },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${secrets.infuraProjectID}`,
       gas: "auto",
